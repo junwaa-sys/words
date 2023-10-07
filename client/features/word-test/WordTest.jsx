@@ -1,5 +1,8 @@
 import React from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
 
 export default function WordTest() {
-  return <h1>Word TEST feature.</h1>
+  const { loginWithRedirect } = useAuth0()
+
+  return <button onClick={() => loginWithRedirect()}>LOG IN</button>
 }
