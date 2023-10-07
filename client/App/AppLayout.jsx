@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem'
 import AdbIcon from '@mui/icons-material/Adb'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 
-const pages = ['words', 'test', 'test-history', '']
+const pages = ['words', 'word-test', 'test-history']
 const settings = ['Dashboard', 'Logout']
 
 function AppLayout() {
