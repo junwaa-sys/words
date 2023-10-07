@@ -9,7 +9,7 @@ server.use(express.static(__dirname + '/public'))
 server.use('/api/data', testRoutes)
 
 server.get('*', (req, res) => {
-  res.sendFile('./publc/index.html')
+  res.sendFile(__dirname + '/public/index.html')
 })
 
 server.listen(PORT, () => {

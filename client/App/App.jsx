@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import request from 'superagent'
 import { fetchData } from '../features/testSlice'
 import { selectTestData } from '../features/testSlice'
+import Words from '../features/words/Words'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import AppLayout from './AppLayout'
 
 export default function App() {
   const [data, setData] = useState('')
@@ -23,23 +26,12 @@ export default function App() {
   }
 
   return (
-    <>
-      <div>
-        <h1>This is from React App component.</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={data}
-            onChange={(e) => setData(e.target.value)}
-          />
-          <input type="submit" />
-        </form>
-        <ul>
-          {testData.map((data, i) => {
-            return <li key={i}>{data}</li>
-          })}
-        </ul>
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AppLayout />}>
+          <Route path="/words" element={<Words />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
