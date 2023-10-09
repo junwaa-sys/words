@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import testReducer from '../features/word-test/testSlice'
+import wordsReducer from '../features/words/wordsSlice'
 
 export default configureStore({
   reducer: {
-    test: testReducer,
+    words: wordsReducer,
   },
 })

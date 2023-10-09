@@ -26,6 +26,7 @@ function AppLayout() {
   const [anchorElUser, setAnchorElUser] = useState(null)
   const [pages, setPages] = useState(pagesNoLoggedIn)
   const [settings, setSettings] = useState(settingsNoLoggedIn)
+  const [isExistingUser, setIsExistingUser] = useState(false)
 
   const navigate = useNavigate()
 
@@ -169,7 +170,7 @@ function AppLayout() {
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt="Remy Sharp"
-                      src="/static/images/avatar/2.jpg"
+                      src={user ? user.picture : '/static/images/avatar/2.jpg'}
                     />
                   </IconButton>
                 </Tooltip>
@@ -205,7 +206,16 @@ function AppLayout() {
             </Toolbar>
           </Container>
         </AppBar>
-        <Container maxWidth="lg" sx={{ p: 5 }}>
+        <Container
+          maxWidth="lg"
+          sx={{
+            p: 5,
+            display: 'flex',
+            alignContent: 'center',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
           <Outlet />
         </Container>
       </>
