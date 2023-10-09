@@ -4,14 +4,22 @@ function getWords(db = connection) {
   return db('words').select()
 }
 
-async function addWord(auth0Id, userName, word, db = connection) {
-  return db('words')
-    .insert({
-      word: word,
-      user_id: auth0Id,
-      user_name: userName,
-    })
-    .returning(['id', 'user_id', 'user_name', 'word'])
+function addWord(auth0Id, userName, word, db = connection) {
+  return db('words').insert({
+    word: word,
+    create_user_id: auth0Id,
+    create_user_name: userName,
+  })
 }
 
-module.exports = { getWords, addWord }
+function updateWord(auth0Id, userName, word, wordId, db = connection) {
+  return db('words')
+    .update({
+      word: word,
+      update_user_id: auth0Id,
+      update_user_name: userName,
+    })
+    .where('id', wordId)
+}
+
+module.exports = { getWords, addWord, updateWord }

@@ -16,6 +16,7 @@ import {
   loadWords,
   addWord,
   isLoadingAddWord,
+  editWord,
 } from './wordsSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
@@ -31,6 +32,7 @@ export default function BasicTable() {
   const [isWordAdded, setIsWordAdded] = useState(false)
   const [dataToDisplay, setDataToDisplay] = useState([])
   const [wordToEdit, setWordToEdit] = useState('')
+  const [wordIdToEdit, setWordItToEdit] = useState('')
   const [inputLabel, setInputLabel] = useState('New Word')
 
   const { user, getAccessTokenSilently } = useAuth0()
@@ -86,6 +88,7 @@ export default function BasicTable() {
       return word.id == wordId
     })
     setWordToEdit(editWord.word)
+    setWordItToEdit(wordId)
   }
 
   const handleChangePage = (event, newPage) => {
@@ -96,9 +99,16 @@ export default function BasicTable() {
   async function handleFormSubmit(e) {
     e.preventDefault()
     const userName = user.name
-    const response = await dispatch(
-      addWord({ token, word: wordToEdit, userName })
-    )
+    if (inputLabel === 'New Word') {
+      const response = await dispatch(
+        addWord({ token, word: wordToEdit, userName })
+      )
+    } else {
+      const response = await dispatch(
+        editWord({ id: wordIdToEdit, token, word: wordToEdit, userName })
+      )
+      setInputLabel('New Word')
+    }
     setWordToEdit('')
     setIsWordAdded(true)
   }
@@ -109,12 +119,17 @@ export default function BasicTable() {
     handleTablePageChange(words, 0, parseInt(event.target.value, 10))
   }
 
-  function createData(id, word, user) {
-    return { id, word, user }
+  function createData(id, word, createUser, updateUser) {
+    return { id, word, createUser, updateUser }
   }
 
   const rows = dataToDisplay?.map((word) => {
-    return createData(word.id, word.word, word.user_name)
+    return createData(
+      word.id,
+      word.word,
+      word.create_user_name,
+      word.update_user_name
+    )
   })
 
   if (loading) {
@@ -132,7 +147,8 @@ export default function BasicTable() {
               <TableRow>
                 <TableCell align="left">ID</TableCell>
                 <TableCell align="left">WORD</TableCell>
-                <TableCell align="left">USER</TableCell>
+                <TableCell align="left">USER(Create)</TableCell>
+                <TableCell align="left">USER(Update)</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -150,7 +166,10 @@ export default function BasicTable() {
                     {row.word}
                   </TableCell>
                   <TableCell id={row.id} align="left">
-                    {row.user}
+                    {row.createUser}
+                  </TableCell>
+                  <TableCell id={row.id} align="left">
+                    {row.updateUser}
                   </TableCell>
                 </TableRow>
               ))}
