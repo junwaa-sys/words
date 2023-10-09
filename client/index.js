@@ -12,6 +12,7 @@ root.render(
     clientId="6UkXfbwHPjudSU1TkULstHU2l2UdlodR"
     authorizationParams={{
       redirect_uri: window.location.origin,
+      audience: 'https://spell-test/',
     }}
   >
     <React.StrictMode>

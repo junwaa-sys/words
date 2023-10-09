@@ -5,8 +5,8 @@
 exports.up = function (knex) {
   return knex.schema.createTable('test_words', (table) => {
     table.increments('id')
-    table.number('test_id')
-    table.number('word_id')
+    table.integer('test_id')
+    table.integer('word_id')
     table.string('answer')
     table.boolean('correct')
   })

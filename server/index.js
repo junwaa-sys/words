@@ -1,12 +1,12 @@
 const express = require('express')
 const server = express()
-const PORT = process.env.PORT || 3000
-const testRoutes = require('./routes/testRoutes')
+const wordRoutes = require('./routes/wordRoutes')
 
+const PORT = process.env.PORT || 3000
 server.use(express.json())
 server.use(express.static(__dirname + '/public'))
 
-server.use('/api/data', testRoutes)
+server.use('/api/words', wordRoutes)
 
 server.get('*', (req, res) => {
   res.sendFile(__dirname + '/public/index.html')
