@@ -2,7 +2,6 @@ const Router = require('express')
 const { auth } = require('express-oauth2-jwt-bearer')
 const db = require('../db/testSetup')
 const testWordDb = require('../db/testWords')
-const { route } = require('./wordRoutes')
 
 const router = Router()
 
@@ -26,7 +25,6 @@ router.get('/setting/get', checkJwt, async (req, res) => {
   const userId = req.auth?.payload.sub
   try {
     const response = await db.getTestSettings(userId)
-
     res.json(response)
   } catch (error) {
     console.log(error)
@@ -37,7 +35,6 @@ router.post('/setting/add', checkJwt, async (req, res) => {
   const userId = req.auth?.payload.sub
   const numberOfWord = req.body.numberOfWord
   const maxAccuracy = req.body.maxAccuracy
-
   try {
     const addedSetting = await db.addTestSetting(
       userId,

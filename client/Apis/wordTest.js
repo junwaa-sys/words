@@ -20,7 +20,9 @@ export async function addTestSetting(data) {
       method: 'POST',
       headers: {
         authorization: `Bearer ${data.token}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify(data),
     })
     const jsonData = await addedSetting.json()
     return jsonData

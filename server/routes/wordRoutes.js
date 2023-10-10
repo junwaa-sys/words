@@ -24,7 +24,6 @@ router.post('/add', checkJwt, async (req, res) => {
     const userId = req.auth?.payload.sub
     const word = req.body.word
     const userName = req.body.userName
-
     const response = await db.addWord(userId, userName, word)
 
     res.json(response)

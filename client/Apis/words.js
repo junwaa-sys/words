@@ -21,6 +21,7 @@ export async function addWord(data) {
         authorization: `Bearer ${data.token}`,
         'Content-Type': 'application/json',
       },
+
       body: JSON.stringify({ word: data.word, userName: data.userName }),
     })
     const jsonData = await addedWord.json()
