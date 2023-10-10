@@ -7,6 +7,8 @@ const initialState = {
   failedToLoadWords: false,
   isLoadingAddWord: false,
   failedToAddWord: false,
+  isLoadingEditWord: false,
+  failedToEditWord: false,
 }
 
 export const loadWords = createAsyncThunk(
@@ -19,8 +21,16 @@ export const loadWords = createAsyncThunk(
 
 export const addWord = createAsyncThunk(
   'words/addWord',
-  async (token, thunkAPI) => {
-    const response = await api.addWord(token)
+  async (data, thunkAPI) => {
+    const response = await api.addWord(data)
+    return response
+  }
+)
+
+export const editWord = createAsyncThunk(
+  'words/editWord',
+  async (data, thunkAPI) => {
+    const response = await api.editWord(data)
     return response
   }
 )
@@ -48,10 +58,20 @@ const wordsSlice = createSlice({
     builder.addCase(addWord.rejected, (state, action) => {
       state.failedToAddWord = true
     })
+    builder.addCase(editWord.pending, (state, action) => {
+      state.isLoadingEditWord = true
+    })
+    builder.addCase(editWord.fulfilled, (state, action) => {
+      state.isLoadingEditWord = false
+    })
+    builder.addCase(editWord.rejected, (state, action) => {
+      state.failedToEditWord = true
+    })
   },
 })
 
 export const selectWords = (state) => state.words.words
 export const isLoadingWords = (state) => state.words.isLoadingWords
 export const isLoadingAddWord = (state) => state.words.isLoadingAddWord
+export const isLoadingEditWord = (state) => state.words.isLoadingEditWord
 export default wordsSlice.reducer

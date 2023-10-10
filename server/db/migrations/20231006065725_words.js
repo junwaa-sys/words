@@ -6,8 +6,10 @@ exports.up = function (knex) {
   return knex.schema.createTable('words', (table) => {
     table.increments('id')
     table.string('word')
-    table.string('user_name')
-    table.string('user_id')
+    table.string('create_user_name')
+    table.string('update_user_name')
+    table.string('create_user_id')
+    table.string('update_user_id')
     table.string('definition')
     table.timestamps(true, true)
   })

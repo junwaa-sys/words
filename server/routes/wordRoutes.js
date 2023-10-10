@@ -27,7 +27,21 @@ router.post('/add', checkJwt, async (req, res) => {
 
     const response = await db.addWord(userId, userName, word)
 
-    res.json(response[0])
+    res.json(response)
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+router.put('/edit/:id', checkJwt, async (req, res) => {
+  try {
+    const userId = req.auth?.payload.sub
+    const word = req.body.word
+    const userName = req.body.userName
+    const wordId = req.params.id
+    const response = await db.updateWord(userId, userName, word, wordId)
+    console.log(req.body.word)
+    res.json(response)
   } catch (error) {
     console.log(error)
   }
