@@ -1,6 +1,6 @@
 const Router = require('express')
 const { auth } = require('express-oauth2-jwt-bearer')
-const db = require('../db/db')
+const db = require('../db/words')
 
 const router = Router()
 
