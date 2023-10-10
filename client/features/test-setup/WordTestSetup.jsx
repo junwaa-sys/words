@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import TestSetupForm from '../../components/TestSetupForm'
 import { loadSettings, addSettings, updateSettings } from './wordTestSetupSlice'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -53,7 +53,15 @@ export default function TestSetup() {
   }
 
   function handleGoTo() {
-    navigate('/word-test-start')
+    navigate('/word-test-start', {
+      state: {
+        settings: {
+          numberOfWord: selectedNumberOfWord,
+          maxAccuracy: selectedMaxAccuracy,
+        },
+      },
+      replace: false,
+    })
   }
 
   return (
