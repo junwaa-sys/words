@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Words from '../features/words/Words'
 import WordTest from '../features/word-test/WordTest'
 import AppLayout from './AppLayout'
 import TestHistory from '../features/test-history/TestHistory'
-import TestSetup from '../features/spell-test-setup/WordTestSetup'
+import TestSetup from '../features/test-setup/WordTestSetup'
 
 export default function App() {
   return (

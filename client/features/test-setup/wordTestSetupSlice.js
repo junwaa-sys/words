@@ -13,7 +13,7 @@ const initialState = {
 
 export const loadSettings = createAsyncThunk(
   'test-settup/fetchSettings',
-  async (token, thunkAPI) => {
+  async (token) => {
     const response = await api.fetchTestSetting(token)
     return response
   }
@@ -21,7 +21,7 @@ export const loadSettings = createAsyncThunk(
 
 export const addSettings = createAsyncThunk(
   'test-setting/addSettings',
-  async (data, thunkAPI) => {
+  async (data) => {
     const response = await api.addTestSetting(data)
     return response
   }
@@ -29,7 +29,7 @@ export const addSettings = createAsyncThunk(
 
 export const updateSettings = createAsyncThunk(
   'test-setup/updateSettings',
-  async (data, thunkAPI) => {
+  async (data) => {
     const response = await api.updateTestSetting(data)
     return response
   }

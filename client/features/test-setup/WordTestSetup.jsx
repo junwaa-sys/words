@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import TestSetupForm from '../../components/TestSetupForm'
 import { loadSettings, addSettings, updateSettings } from './wordTestSetupSlice'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -20,6 +20,7 @@ export default function TestSetup() {
       .then(async (token) => {
         const settings = await dispatch(loadSettings(token))
         setToken(token)
+
         if (settings.payload.length > 0) {
           setSaveType('update')
           setSelectedNumberOfWord(settings.payload[0].numberOfWord)
