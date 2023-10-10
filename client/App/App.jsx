@@ -4,6 +4,7 @@ import Words from '../features/words/Words'
 import WordTest from '../features/word-test/WordTest'
 import AppLayout from './AppLayout'
 import TestHistory from '../features/test-history/TestHistory'
+import TestSetup from '../features/spell-test-setup/WordTestSetup'
 
 export default function App() {
   return (
@@ -12,7 +13,7 @@ export default function App() {
         <Route path="/" element={<AppLayout />}>
           <Route path="/words" element={<Words />} />
           <Route path="/test-history" element={<TestHistory />} />
-          <Route path="/word-test" element={<WordTest />} />
+          <Route path="/word-test" element={<TestSetup />} />
         </Route>
       </Routes>
     </BrowserRouter>

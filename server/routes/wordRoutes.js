@@ -1,7 +1,6 @@
 const Router = require('express')
 const { auth } = require('express-oauth2-jwt-bearer')
 const db = require('../db/db')
-const { Dvr } = require('@mui/icons-material')
 
 const router = Router()
 
@@ -41,7 +40,6 @@ router.put('/edit/:id', checkJwt, async (req, res) => {
     const userName = req.body.userName
     const wordId = req.params.id
     const response = await db.updateWord(userId, userName, word, wordId)
-    console.log(req.body.word)
     res.json(response)
   } catch (error) {
     console.log(error)

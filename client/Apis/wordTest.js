@@ -1,0 +1,48 @@
+export async function fetchTestSetting(token) {
+  try {
+    const settings = await fetch('api/test/setting/get', {
+      method: 'GET',
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
+    const jsonSettings = await settings.json()
+    return jsonSettings
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function addTestSetting(data) {
+  try {
+    const addedSetting = await fetch('api/test/setting/add', {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${data.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    const jsonData = await addedSetting.json()
+    return jsonData
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export async function updateTestSetting(data) {
+  try {
+    const updatedSetting = await fetch('api/test/setting/update', {
+      method: 'PUT',
+      headers: {
+        authorization: `Bearer ${data.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    const jsonData = await updatedSetting.json()
+    return jsonData
+  } catch (error) {
+    console.log(error)
+  }
+}

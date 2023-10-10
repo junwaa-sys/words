@@ -96,6 +96,16 @@ export default function BasicTable() {
     handleTablePageChange(words, newPage)
   }
 
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPage(0)
+    handleTablePageChange(words, 0, parseInt(event.target.value, 10))
+  }
+
+  function createData(id, word, createUser, updateUser) {
+    return { id, word, createUser, updateUser }
+  }
+
   async function handleFormSubmit(e) {
     e.preventDefault()
     const userName = user.name
@@ -113,14 +123,9 @@ export default function BasicTable() {
     setIsWordAdded(true)
   }
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-    handleTablePageChange(words, 0, parseInt(event.target.value, 10))
-  }
-
-  function createData(id, word, createUser, updateUser) {
-    return { id, word, createUser, updateUser }
+  function handleFormCancel() {
+    setInputLabel('New Word')
+    setWordToEdit('')
   }
 
   const rows = dataToDisplay?.map((word) => {
@@ -190,6 +195,7 @@ export default function BasicTable() {
           setWord={setWordToEdit}
           setLabel={setInputLabel}
           handleSubmit={handleFormSubmit}
+          handleCancel={handleFormCancel}
         />
       </>
     )

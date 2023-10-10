@@ -10,18 +10,9 @@ export default function NewWordForm({
   word = '',
   label = '',
   setWord,
-  setLabel,
   handleSubmit,
+  handleCancel,
 }) {
-  function handleChange(e) {
-    const wordValue = e.target.value
-  }
-
-  function handleCancel(e) {
-    setLabel('New Word')
-    setWord('')
-  }
-
   return (
     <Container
       sx={{
