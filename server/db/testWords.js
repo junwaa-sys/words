@@ -5,7 +5,7 @@ function getWordsForTest(auth0Id, maxAccuracy, db = connection) {
     .leftJoin('word_accuracy', function () {
       this.on('words.id', '=', 'word_accuracy.word_id')
     })
-    .select()
+    .select('words.id as word_id', 'words.word')
     .where('word_accuracy.user_id', auth0Id)
     .orWhere('accuracy', '<=', maxAccuracy)
     .orWhere('accuracy', null)

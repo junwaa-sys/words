@@ -12,7 +12,6 @@ export const fetchTestWords = createAsyncThunk(
   'testWords/fetch-test-words',
   async (data, thunkAPI) => {
     const response = await api.fetchTestWords(data)
-    console.log(response)
     return response
   }
 )
