@@ -114,6 +114,7 @@ export default function BasicTable() {
       )
       setInputLabel('New Word')
     }
+    setPage(0)
     setWordToEdit('')
     setIsWordAdded(true)
   }
