@@ -1,10 +1,15 @@
 import { Button, FormControl, Input } from '@mui/material'
 import React from 'react'
 
-export default function AnswerInput({ handleSubmit, answer, setAnswer }) {
+export default function AnswerInput({
+  handleSubmit,
+  answer,
+  setAnswer,
+  isDisabled,
+}) {
   return (
     <form onSubmit={handleSubmit}>
-      <FormControl>
+      <FormControl disabled={isDisabled}>
         <Input
           value={answer}
           onChange={(e) => {
@@ -14,7 +19,9 @@ export default function AnswerInput({ handleSubmit, answer, setAnswer }) {
           required
           inputProps={{ pattern: '[A-Za-z]*' }}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isDisabled}>
+          Submit
+        </Button>
       </FormControl>
     </form>
   )
