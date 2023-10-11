@@ -7,6 +7,7 @@ exports.up = function (knex) {
     table.increments('id')
     table.integer('word_id')
     table.integer('test_id')
+    table.string('answer')
     table.string('result')
   })
 }

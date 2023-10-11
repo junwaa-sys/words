@@ -101,11 +101,16 @@ export default function BasicTable() {
     const userName = user.name
     if (inputLabel === 'New Word') {
       const response = await dispatch(
-        addWord({ token, word: wordToEdit, userName })
+        addWord({ token, word: wordToEdit.trim().toLowerCase(), userName })
       )
     } else {
       const response = await dispatch(
-        editWord({ id: wordIdToEdit, token, word: wordToEdit, userName })
+        editWord({
+          id: wordIdToEdit,
+          token,
+          word: wordToEdit.trim().toLowerCase(),
+          userName,
+        })
       )
       setInputLabel('New Word')
     }

@@ -8,7 +8,7 @@ exports.up = function (knex) {
     table.integer('test_id')
     table.integer('word_id')
     table.string('answer')
-    table.boolean('correct')
+    table.boolean('result')
   })
 }
 
