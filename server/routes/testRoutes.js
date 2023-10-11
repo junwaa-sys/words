@@ -67,13 +67,17 @@ router.post('/words/get', checkJwt, async (req, res) => {
   const userId = req.auth?.payload.sub
   const maxAccuracy = req.body.maxAccuracy
   const numberOfWord = req.body.numberOfWord
+
   try {
     const response = await testWordDb.getWordsForTest(userId, maxAccuracy)
     const suffledResponse = await suffle(response)
+
     if (suffledResponse.length > numberOfWord) {
-      suffledResponse.slice(0, numberOfWord)
+      const slicedResponse = suffledResponse.slice(0, numberOfWord)
+      res.json(slicedResponse)
+    } else {
+      res.json(suffledResponse)
     }
-    res.json(suffledResponse)
   } catch (error) {
     console.log(error)
   }
