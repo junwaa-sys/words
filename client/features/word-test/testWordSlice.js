@@ -16,6 +16,14 @@ export const fetchTestWords = createAsyncThunk(
   }
 )
 
+export const addTestResult = createAsyncThunk(
+  'testWords/add-test-result',
+  async (data) => {
+    const response = await api.addTestResult(data)
+    return response
+  }
+)
+
 export const testWordsSlice = createSlice({
   name: 'testWords',
   initialState: initialState,

@@ -64,3 +64,20 @@ export async function fetchTestWords(data) {
     console.log(error)
   }
 }
+
+export async function addTestResult(data) {
+  try {
+    const testResult = await fetch('api/test/words/result', {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${data.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    const jsonData = await testResult.json()
+    return jsonData
+  } catch (error) {
+    console.log(error)
+  }
+}

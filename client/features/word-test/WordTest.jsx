@@ -50,6 +50,8 @@ export default function WordTest() {
     console.log()
   }
 
+  function recordTestResult() {}
+
   if (words == undefined) {
     return (
       <Box sx={{ alignContent: 'center', justifyContent: 'center' }}>
@@ -81,15 +83,8 @@ export default function WordTest() {
           />
         </Container>
         <Container>
-          <Button
-            sx={{ visibility: visible }}
-            onClick={(e) =>
-              setCurrentIndex((prev) => {
-                return prev + 1
-              })
-            }
-          >
-            Finish Test
+          <Button sx={{ visibility: visible }} onClick={recordTestResult}>
+            Save result
           </Button>
         </Container>
         <ResultDialog
