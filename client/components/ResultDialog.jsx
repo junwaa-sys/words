@@ -5,6 +5,9 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt'
+import DangerousIcon from '@mui/icons-material/Dangerous'
+import { Typography } from '@mui/material'
 
 export default function ResultDialog({
   open,
@@ -14,6 +17,9 @@ export default function ResultDialog({
   setIsDisabled,
   setVisible,
   wordCount,
+  result,
+  testWord,
+  answer,
 }) {
   const handleClose = () => {
     if (wordCount > currentIndex + 1) {
@@ -31,18 +37,29 @@ export default function ResultDialog({
     <div>
       <Dialog
         open={open}
-        maxWidth={'xs'}
+        fullWidth
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"Use Google's location service?"}
-        </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
+          <DialogContentText
+            align="center"
+            variant="overline"
+            id="alert-dialog-description"
+          >
+            {result ? (
+              <ThumbUpAltIcon color="success" size={'large'} />
+            ) : (
+              <DangerousIcon color="error" size={'large'} />
+            )}
+            <br></br>
+            {result ? 'Correct' : 'Wrong'}
+            <br></br>
+            Test Word: {testWord}
+            <br></br>
+            Your Answer: {answer}
+            <br></br>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

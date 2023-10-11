@@ -38,10 +38,16 @@ export default function WordTest() {
     const result = answerToCompare === testWordToCompare
     setTestResults([
       ...testResults,
-      { wordId: testWordId, answer: answerToCompare, result: result },
+      {
+        wordId: testWordId,
+        testWord: testWordToCompare,
+        answer: answerToCompare,
+        result: result,
+      },
     ])
     setAnswer('')
     setResultOpen(true)
+    console.log()
   }
 
   if (words == undefined) {
@@ -94,6 +100,9 @@ export default function WordTest() {
           setIsDisabled={setIsDisabled}
           setVisible={setVisible}
           wordCount={words.length}
+          result={testResults[testResults.length - 1]?.result}
+          testWord={testResults[testResults.length - 1]?.testWord}
+          answer={testResults[testResults.length - 1]?.answer}
         />
       </>
     )
