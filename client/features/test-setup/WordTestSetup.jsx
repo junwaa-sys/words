@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 export default function TestSetup() {
   const [token, setToken] = useState('')
   const [selectedNumberOfWord, setSelectedNumberOfWord] = useState(10)
-  const [selectedMaxAccuracy, setSelectedMaxAccuracy] = useState(100)
+  const [selectedMaxAccuracy, setSelectedMaxAccuracy] = useState(1)
   const [saveType, setSaveType] = useState('new')
 
   const { user, getAccessTokenSilently } = useAuth0()
