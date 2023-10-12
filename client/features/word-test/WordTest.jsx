@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useLocation } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 
 import { Button, Container, useIsFocusVisible } from '@mui/material'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 
+import { addTestResult } from './testWordSlice'
+
 import AnswerInput from '../../components/TestAnswerForm'
 import ResultDialog from '../../components/ResultDialog'
+import { Today } from '@mui/icons-material'
 
 export default function WordTest() {
   const [resultOpen, setResultOpen] = useState(false)
@@ -22,13 +26,12 @@ export default function WordTest() {
   const { state } = useLocation()
   const { words, token } = state
   const speech = new SpeechSynthesisUtterance()
+  const dispatch = useDispatch()
 
   function handlePlay() {
     speech.text = words[currentIndex].word
     window.speechSynthesis.speak(speech)
   }
-
-  useEffect(() => {}, [isDisabled])
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -47,10 +50,18 @@ export default function WordTest() {
     ])
     setAnswer('')
     setResultOpen(true)
-    console.log()
   }
 
-  function recordTestResult() {}
+  function recordTestResult() {
+    const totalNumberOfTest = testResults.length
+    const correctAnswer = testResults.filter((result) => result.result === true)
+    const result = `${correctAnswer.length} / ${totalNumberOfTest}`
+    const accuracy = correctAnswer.length / totalNumberOfTest
+    const toDay = new Date()
+    dispatch(
+      addTestResult({ token, testResults, result, accuracy, testDate: toDay })
+    )
+  }
 
   if (words == undefined) {
     return (
@@ -83,9 +94,7 @@ export default function WordTest() {
           />
         </Container>
         <Container>
-          <Button sx={{ visibility: visible }} onClick={recordTestResult}>
-            Save result
-          </Button>
+          <Button onClick={recordTestResult}>Save result</Button>
         </Container>
         <ResultDialog
           open={resultOpen}

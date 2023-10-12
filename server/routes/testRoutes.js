@@ -83,4 +83,30 @@ router.post('/words/get', checkJwt, async (req, res) => {
   }
 })
 
+router.post('/result/add', checkJwt, async (req, res) => {
+  const userId = req.auth?.payload.sub
+  const { result, accuracy, testResults, testDate } = req.body
+  console.log(testResults)
+  try {
+    const addedTestResult = await testWordDb.addTestResult({
+      auth0Id: userId,
+      testDate: testDate,
+      result: result,
+      accuracy: accuracy,
+    })
+
+    testResults.forEach(async (result) => {
+      await testWordDb.addWordTest({
+        testId: addedTestResult[0].id,
+        word_id: result.wordId,
+        answer: result.answer,
+        result: result.result,
+      })
+    })
+
+    res.json({ result: 'succeed' })
+  } catch (error) {
+    console.log(error)
+  }
+})
 module.exports = router

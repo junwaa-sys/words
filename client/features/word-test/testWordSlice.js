@@ -4,8 +4,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = {
   testWords: [],
+  results: [],
   isLoadingTestWords: false,
   failedLoadingTestWords: false,
+  isLoadingAddTestResult: false,
+  failedAddingTestResult: false,
 }
 
 export const fetchTestWords = createAsyncThunk(
@@ -43,9 +46,23 @@ export const testWordsSlice = createSlice({
       state.isLoadingTestWords = false
       state.failedLoadingTestWords = true
     })
+    builder.addCase(addTestResult.pending, (state, action) => {
+      state.isLoadingAddTestResult = true
+    })
+
+    builder.addCase(addTestResult.fulfilled, (state, action) => {
+      state.isLoadingAddTestResult = false
+    })
+
+    builder.addCase(addTestResult.rejected, (state, action) => {
+      state.isLoadingAddTestResult = false
+      state.failedAddingTestResult = true
+    })
   },
 })
 
 export const selectTestWordsData = (state) => state.testWords
 export const isLoadingTestWords = (state) => state.isLoadingTestWord
+export const isLoadingAddTestResult = (state) => state.isLoadingAddTestResult
+
 export default testWordsSlice.reducer

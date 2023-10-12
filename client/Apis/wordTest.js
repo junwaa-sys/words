@@ -67,7 +67,7 @@ export async function fetchTestWords(data) {
 
 export async function addTestResult(data) {
   try {
-    const testResult = await fetch('api/test/words/result', {
+    const testResult = await fetch('api/test/result/add', {
       method: 'POST',
       headers: {
         authorization: `Bearer ${data.token}`,
