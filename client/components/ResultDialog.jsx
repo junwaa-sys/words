@@ -20,12 +20,14 @@ export default function ResultDialog({
   result,
   testWord,
   answer,
+  handlePlay,
 }) {
-  const handleClose = () => {
+  const handleClose = (e) => {
     if (wordCount > currentIndex + 1) {
       setCurrentIndex((prev) => {
         return prev + 1
       })
+      handlePlay(e, currentIndex + 1)
     } else {
       setIsDisabled(true)
       setVisible('visible')

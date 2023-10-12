@@ -28,8 +28,9 @@ export default function WordTest() {
   const speech = new SpeechSynthesisUtterance()
   const dispatch = useDispatch()
 
-  function handlePlay() {
-    speech.text = words[currentIndex].word
+  function handlePlay(e, i = currentIndex) {
+    console.log({ i, currentIndex })
+    speech.text = words[i].word
     window.speechSynthesis.speak(speech)
   }
 
@@ -102,7 +103,9 @@ export default function WordTest() {
           />
         </Container>
         <Container>
-          <Button onClick={recordTestResult}>Save result</Button>
+          <Button sx={{ visibility: visible }} onClick={recordTestResult}>
+            Save result
+          </Button>
         </Container>
         <ResultDialog
           open={resultOpen}
@@ -115,6 +118,7 @@ export default function WordTest() {
           result={testResults[testResults.length - 1]?.result}
           testWord={testResults[testResults.length - 1]?.testWord}
           answer={testResults[testResults.length - 1]?.answer}
+          handlePlay={handlePlay}
         />
       </>
     )

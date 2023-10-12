@@ -31,6 +31,7 @@ export default function TestSetup() {
           setSaveType('update')
           setSelectedNumberOfWord(settings.payload[0].numberOfWord)
           setSelectedMaxAccuracy(settings.payload[0].maxAccuracy)
+          setIsDisabled(false)
         }
       })
       .catch((error) => {
@@ -75,6 +76,9 @@ export default function TestSetup() {
         },
         replace: false,
       })
+    } else {
+      //alert "no word to test"
+      console.log('no word data')
     }
   }
 
