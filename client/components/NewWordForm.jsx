@@ -43,6 +43,7 @@ export default function NewWordForm({
             inputProps={{ pattern: '[A-Za-z]*' }}
             sx={{ marginBottom: 2 }}
             onChange={(e) => setWord(e.target.value)}
+            autoFocus
           />
           <Container sx={{ display: 'flex', flexDirection: 'row' }}>
             <Button sx={{ m: 1 }} type="submit" variant="outlined">

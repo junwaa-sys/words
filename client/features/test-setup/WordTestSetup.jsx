@@ -15,6 +15,7 @@ export default function TestSetup() {
   const [selectedNumberOfWord, setSelectedNumberOfWord] = useState(10)
   const [selectedMaxAccuracy, setSelectedMaxAccuracy] = useState(1)
   const [saveType, setSaveType] = useState('new')
+  const [isDisabled, setIsDisabled] = useState(true)
 
   const { user, getAccessTokenSilently } = useAuth0()
   const dispatch = useDispatch()
@@ -55,6 +56,7 @@ export default function TestSetup() {
         })
       )
     }
+    setIsDisabled(false)
   }
 
   async function handleGoTo() {
@@ -65,7 +67,7 @@ export default function TestSetup() {
         numberOfWord: selectedNumberOfWord,
       })
     )
-    if (testWord.payload.length > 0) {
+    if (testWords.payload.length > 0) {
       navigate('/word-test-start', {
         state: {
           words: testWords.payload,
@@ -85,6 +87,7 @@ export default function TestSetup() {
       handleSubmit={handleFormSubmit}
       buttonLabel={saveType}
       handleGoTo={handleGoTo}
+      isDisabled={isDisabled}
     />
   )
 }

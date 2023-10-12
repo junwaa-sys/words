@@ -7,6 +7,8 @@ exports.up = function (knex) {
     table.increments('id')
     table.string('user_id')
     table.integer('word_id')
+    table.integer('total_tests')
+    table.integer('correct_tests')
     table.double('accuracy')
   })
 }

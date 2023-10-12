@@ -67,7 +67,6 @@ router.post('/words/get', checkJwt, async (req, res) => {
   const userId = req.auth?.payload.sub
   const maxAccuracy = req.body.maxAccuracy
   const numberOfWord = req.body.numberOfWord
-
   try {
     const response = await testWordDb.getWordsForTest(userId, maxAccuracy)
     const suffledResponse = await suffle(response)
@@ -86,13 +85,13 @@ router.post('/words/get', checkJwt, async (req, res) => {
 router.post('/result/add', checkJwt, async (req, res) => {
   const userId = req.auth?.payload.sub
   const { result, accuracy, testResults, testDate } = req.body
-  console.log(testResults)
+
   try {
     const addedTestResult = await testWordDb.addTestResult({
       auth0Id: userId,
       testDate: testDate,
       result: result,
-      accuracy: accuracy,
+      accuracy: accuracy.toFixed(2),
     })
 
     testResults.forEach(async (result) => {
@@ -102,6 +101,36 @@ router.post('/result/add', checkJwt, async (req, res) => {
         answer: result.answer,
         result: result.result,
       })
+      const wordAccuracy = await testWordDb.getWordsTestResults({
+        userId: userId,
+        wordId: result.wordId,
+      })
+
+      if (!wordAccuracy) {
+        //add
+        const newCorrectTests = result.result ? 1 : 0
+        const res = await testWordDb.addWordAccuracy({
+          userId: userId,
+          wordId: result.wordId,
+          totalTests: 1,
+          correctTests: result.result ? 1 : 0,
+          accuracy: (newCorrectTests / 1).toFixed(2),
+        })
+      } else {
+        //update
+        const newTotalTests = wordAccuracy.total_tests + 1
+        const newCorrectTests = result.result
+          ? wordAccuracy.correct_tests + 1
+          : wordAccuracy.correct_tests
+
+        const res = await testWordDb.updateWordAccuracy({
+          auth0Id: userId,
+          wordId: result.wordId,
+          totalTests: newTotalTests,
+          correctTests: newCorrectTests,
+          accuracy: (newCorrectTests / newTotalTests).toFixed(2),
+        })
+      }
     })
 
     res.json({ result: 'succeed' })

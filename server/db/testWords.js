@@ -11,11 +11,12 @@ function getWordsForTest(auth0Id, maxAccuracy, db = connection) {
     .orWhere('accuracy', null)
 }
 
-function getWordsTestResults(userId, db = connection) {
-  return db('test_words')
-    .join('test_history', 'test_history.id', '=', 'test_words.test_id')
-    .select('test_history.id as id', 'test_words.word_id', 'test_words.correct')
-    .where('test_history.user_id', userId)
+function getWordsTestResults({ userId, wordId }, db = connection) {
+  return db('word_accuracy')
+    .select()
+    .where('user_id', userId)
+    .andWhere('word_id', wordId)
+    .first()
 }
 
 function addTestResult(
@@ -41,17 +42,29 @@ function addWordTest({ testId, wordId, answer, result }, db = connection) {
   })
 }
 
-function updateWordAccuracy({ auth0Id, wordId, accuracy }, db = connection) {
+function updateWordAccuracy(
+  { auth0Id, wordId, totalTests, correctTests, accuracy },
+  db = connection
+) {
   return db('word_accuracy')
-    .update({ accuracy: accuracy })
-    .where('user_id', userId)
+    .update({
+      total_tests: totalTests,
+      correct_tests: correctTests,
+      accuracy: accuracy,
+    })
+    .where('user_id', auth0Id)
     .andWhere('word_id', wordId)
 }
 
-function addWordAccuracy({ userId, wordId, accuracy }, db = connection) {
+function addWordAccuracy(
+  { userId, wordId, accuracy, totalTests, correctTests },
+  db = connection
+) {
   return db('word_accuracy').insert({
     user_id: userId,
     word_id: wordId,
+    total_tests: totalTests,
+    correct_tests: correctTests,
     accuracy: accuracy,
   })
 }

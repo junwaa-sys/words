@@ -14,6 +14,7 @@ export default function TestSetupForm({
   handleSubmit,
   buttonLabel,
   handleGoTo,
+  isDisabled,
 }) {
   return (
     <>
@@ -54,11 +55,11 @@ export default function TestSetupForm({
         </Select>
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
           <Button sx={{ m: 1 }} variant="outlined" onClick={handleSubmit}>
-            {buttonLabel}
+            Save settings
           </Button>
         </Container>
       </FormControl>
-      <Button variant="outlined" onClick={handleGoTo}>
+      <Button variant="outlined" onClick={handleGoTo} disabled={isDisabled}>
         Go to Test
       </Button>
     </>
