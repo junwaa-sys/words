@@ -65,13 +65,15 @@ export default function TestSetup() {
         numberOfWord: selectedNumberOfWord,
       })
     )
-    navigate('/word-test-start', {
-      state: {
-        words: testWords.payload,
-        token: token,
-      },
-      replace: false,
-    })
+    if (testWord.payload.length > 0) {
+      navigate('/word-test-start', {
+        state: {
+          words: testWords.payload,
+          token: token,
+        },
+        replace: false,
+      })
+    }
   }
 
   return (

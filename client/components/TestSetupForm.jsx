@@ -45,12 +45,12 @@ export default function TestSetupForm({
           label="Max Accuracy"
           onChange={(e) => setMaxAccuracy(e.target.value)}
         >
-          <MenuItem value={50}>50%</MenuItem>
-          <MenuItem value={60}>60%</MenuItem>
-          <MenuItem value={70}>70%</MenuItem>
-          <MenuItem value={80}>80%</MenuItem>
-          <MenuItem value={90}>90%</MenuItem>
-          <MenuItem value={100}>100%</MenuItem>
+          <MenuItem value={0.5}>50%</MenuItem>
+          <MenuItem value={0.6}>60%</MenuItem>
+          <MenuItem value={0.7}>70%</MenuItem>
+          <MenuItem value={0.8}>80%</MenuItem>
+          <MenuItem value={0.9}>90%</MenuItem>
+          <MenuItem value={1}>100%</MenuItem>
         </Select>
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
           <Button sx={{ m: 1 }} variant="outlined" onClick={handleSubmit}>

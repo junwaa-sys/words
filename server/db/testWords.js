@@ -37,7 +37,7 @@ function addWordTest({ testId, wordId, answer, result }, db = connection) {
     test_id: testId,
     word_id: wordId,
     answer: answer,
-    correct: result,
+    result: result,
   })
 }
 
