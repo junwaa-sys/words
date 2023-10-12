@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth0 } from '@auth0/auth0-react'
 import { useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
-import { Button, Container, useIsFocusVisible } from '@mui/material'
+import { Button, Container } from '@mui/material'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
@@ -12,24 +11,23 @@ import { addTestResult } from './testWordSlice'
 
 import AnswerInput from '../../components/TestAnswerForm'
 import ResultDialog from '../../components/ResultDialog'
-import { Today } from '@mui/icons-material'
+import TestEndDialog from '../../components/TestEndDialog'
 
 export default function WordTest() {
   const [resultOpen, setResultOpen] = useState(false)
+  const [endOfTestOpen, setEndOfTestOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [testResults, setTestResults] = useState([])
   const [answer, setAnswer] = useState('')
   const [isDisabled, setIsDisabled] = useState(false)
   const [visible, setVisible] = useState('hidden')
 
-  const { getAccessTokenSilently } = useAuth0()
   const { state } = useLocation()
   const { words, token } = state
   const speech = new SpeechSynthesisUtterance()
   const dispatch = useDispatch()
 
   function handlePlay(e, i = currentIndex) {
-    console.log({ i, currentIndex })
     speech.text = words[i].word
     window.speechSynthesis.speak(speech)
   }
@@ -70,6 +68,7 @@ export default function WordTest() {
         correctTests: correctAnswer.length,
       })
     )
+    setEndOfTestOpen(true)
   }
 
   if (words == undefined) {
@@ -120,6 +119,7 @@ export default function WordTest() {
           answer={testResults[testResults.length - 1]?.answer}
           handlePlay={handlePlay}
         />
+        <TestEndDialog open={endOfTestOpen} setOpen={setEndOfTestOpen} />
       </>
     )
   }
