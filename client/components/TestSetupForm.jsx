@@ -18,7 +18,7 @@ export default function TestSetupForm({
 }) {
   return (
     <>
-      <FormControl fullWidth sx={{ m: 2, minWidth: 60 }}>
+      <FormControl fullWidth sx={{ m: 2 }}>
         <InputLabel id="number-of-word">Number of Word</InputLabel>
         <Select
           size="small"
@@ -53,15 +53,27 @@ export default function TestSetupForm({
           <MenuItem value={0.9}>90%</MenuItem>
           <MenuItem value={1}>100%</MenuItem>
         </Select>
-        <Container sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Button sx={{ m: 1 }} variant="outlined" onClick={handleSubmit}>
-            Save settings
-          </Button>
-        </Container>
       </FormControl>
-      <Button variant="outlined" onClick={handleGoTo} disabled={isDisabled}>
-        Go to Test
-      </Button>
+      <FormControl
+        fullWidth
+        sx={{ m: 2, display: 'flex', alignItems: 'center' }}
+      >
+        <Button
+          sx={{ m: 1, width: 150 }}
+          variant="outlined"
+          onClick={handleSubmit}
+        >
+          Save settings
+        </Button>
+        <Button
+          sx={{ m: 1, width: 150 }}
+          variant="outlined"
+          onClick={handleGoTo}
+          disabled={isDisabled}
+        >
+          Go to Test
+        </Button>
+      </FormControl>
     </>
   )
 }

@@ -9,6 +9,7 @@ import {
 import { useDispatch } from 'react-redux'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate } from 'react-router-dom'
+import { Container } from '@mui/material'
 
 export default function TestSetup() {
   const [token, setToken] = useState('')
@@ -83,15 +84,19 @@ export default function TestSetup() {
   }
 
   return (
-    <TestSetupForm
-      numberOfWord={selectedNumberOfWord}
-      MaxAccuracy={selectedMaxAccuracy}
-      setNumberOfWord={setSelectedNumberOfWord}
-      setMaxAccuracy={setSelectedMaxAccuracy}
-      handleSubmit={handleFormSubmit}
-      buttonLabel={saveType}
-      handleGoTo={handleGoTo}
-      isDisabled={isDisabled}
-    />
+    <Container
+      sx={{ width: 400, alignItems: 'center', justifyItems: 'center' }}
+    >
+      <TestSetupForm
+        numberOfWord={selectedNumberOfWord}
+        MaxAccuracy={selectedMaxAccuracy}
+        setNumberOfWord={setSelectedNumberOfWord}
+        setMaxAccuracy={setSelectedMaxAccuracy}
+        handleSubmit={handleFormSubmit}
+        buttonLabel={saveType}
+        handleGoTo={handleGoTo}
+        isDisabled={isDisabled}
+      />
+    </Container>
   )
 }
