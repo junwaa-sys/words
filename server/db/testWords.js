@@ -20,7 +20,7 @@ function getWordsTestResults({ userId, wordId }, db = connection) {
 }
 
 function addTestResult(
-  { auth0Id, testDate, result, accuracy },
+  { auth0Id, testDate, result, accuracy, userName },
   db = connection
 ) {
   return db('test_history')
@@ -29,6 +29,7 @@ function addTestResult(
       user_id: auth0Id,
       result: result,
       accuracy: accuracy,
+      user_name: userName,
     })
     .returning('id')
 }

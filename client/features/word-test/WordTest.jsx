@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
+import { useAuth0 } from '@auth0/auth0-react'
 
 import { Button, Container } from '@mui/material'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
@@ -25,6 +26,7 @@ export default function WordTest() {
   const { state } = useLocation()
   const { words, token } = state
   const speech = new SpeechSynthesisUtterance()
+  const { user } = useAuth0()
   const dispatch = useDispatch()
 
   function handlePlay(e, i = currentIndex) {
@@ -57,6 +59,9 @@ export default function WordTest() {
     const result = `${correctAnswer.length} / ${totalTests}`
     const accuracy = correctAnswer.length / totalTests
     const testDate = new Date()
+    const userName = user.name
+
+    console.log(userName)
     dispatch(
       addTestResult({
         token,
@@ -66,6 +71,7 @@ export default function WordTest() {
         testDate,
         totalTests,
         correctTests: correctAnswer.length,
+        userName: userName,
       })
     )
     setEndOfTestOpen(true)

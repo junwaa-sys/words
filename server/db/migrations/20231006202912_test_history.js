@@ -7,6 +7,7 @@ exports.up = function (knex) {
     table.increments('id')
     table.string('test_date')
     table.integer('user_id')
+    table.string('user_name')
     table.string('result')
     table.double('accuracy')
     table.timestamps(true, true)

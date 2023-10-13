@@ -84,7 +84,7 @@ router.post('/words/get', checkJwt, async (req, res) => {
 
 router.post('/result/add', checkJwt, async (req, res) => {
   const userId = req.auth?.payload.sub
-  const { result, accuracy, testResults, testDate } = req.body
+  const { result, accuracy, testResults, testDate, userName } = req.body
 
   try {
     const addedTestResult = await testWordDb.addTestResult({
@@ -92,6 +92,7 @@ router.post('/result/add', checkJwt, async (req, res) => {
       testDate: testDate,
       result: result,
       accuracy: accuracy.toFixed(2),
+      userName: userName,
     })
 
     testResults.forEach(async (result) => {
