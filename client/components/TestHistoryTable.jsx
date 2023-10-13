@@ -94,18 +94,18 @@ export default function TestRecordTable({ data }) {
     )
   }
 
-  function createData(id, userName, result, date) {
+  function createData(id, userName, result, accuracy, date) {
     return { id, userName, result, date }
   }
 
   const rows = data.map((element) => {
-    const { id, testDate, result, userName } = element
+    const { id, testDate, totalTests, correctTests, userName } = element
+    const result = `${correctTests} / ${totalTests}`
     const date = new Date(testDate).toLocaleString()
+    const accuracy = (correctTests / totalTests).toFixed(2) * 100
 
-    return createData(id, userName, result, date)
+    return createData(id, userName, result, accuracy, date)
   })
-
-  console.log(rows)
 
   return (
     <TableContainer component={Paper}>
@@ -115,6 +115,7 @@ export default function TestRecordTable({ data }) {
             <TableCell align="left">ID</TableCell>
             <TableCell align="left">USER</TableCell>
             <TableCell align="left">Result (correct / total)</TableCell>
+            <TableCell align="left">Accuracy (%)</TableCell>
             <TableCell align="left">Test Date</TableCell>
           </TableRow>
         </TableHead>
@@ -124,7 +125,7 @@ export default function TestRecordTable({ data }) {
             : rows
           ).map((row) => (
             <TableRow key={row.id}>
-              <TableCell sx={{ width: 50 }} component="th" scope="row">
+              <TableCell style={{ width: 50 }} component="th" scope="row">
                 {row.id}
               </TableCell>
               <TableCell style={{ width: 160 }} align="left">
@@ -132,6 +133,9 @@ export default function TestRecordTable({ data }) {
               </TableCell>
               <TableCell style={{ width: 160 }} align="left">
                 {row.result}
+              </TableCell>
+              <TableCell style={{ width: 160 }} align="left">
+                {row.accuracy}
               </TableCell>
               <TableCell style={{ width: 160 }} align="left">
                 {row.date}
