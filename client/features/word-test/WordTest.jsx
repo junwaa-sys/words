@@ -55,23 +55,23 @@ export default function WordTest() {
 
   function recordTestResult() {
     const totalTests = testResults.length
-    const correctAnswer = testResults.filter((result) => result.result === true)
-    const result = `${correctAnswer.length} / ${totalTests}`
-    const accuracy = correctAnswer.length / totalTests
+    const correctAnswers = testResults.filter(
+      (result) => result.result === true
+    )
+    const correctTests = correctAnswers.length
+    const accuracy = correctTests / totalTests
     const testDate = new Date()
     const userName = user.name
 
-    console.log(userName)
     dispatch(
       addTestResult({
         token,
         testResults,
-        result,
         accuracy,
         testDate,
         totalTests,
-        correctTests: correctAnswer.length,
-        userName: userName,
+        userName,
+        correctTests,
       })
     )
     setEndOfTestOpen(true)

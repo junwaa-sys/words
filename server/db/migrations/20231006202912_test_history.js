@@ -9,6 +9,8 @@ exports.up = function (knex) {
     table.integer('user_id')
     table.string('user_name')
     table.string('result')
+    table.integer('total_tests')
+    table.integer('correct_tests')
     table.double('accuracy')
     table.timestamps(true, true)
   })

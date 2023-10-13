@@ -45,7 +45,6 @@ const wordsSlice = createSlice({
     builder.addCase(loadWords.fulfilled, (state, action) => {
       state.isLoadingWords = false
       state.words = [...action.payload]
-      console.log(JSON.parse(JSON.stringify(state)))
     })
     builder.addCase(loadWords.rejected, (state, action) => {
       state.failedToLoadWords = true
