@@ -8,7 +8,8 @@ function getHistoryByUserId(userId, db = connection) {
       'user_id as userId',
       'user_name as userName',
       'total_tests as totalTests',
-      'correct_tests as correctTests'
+      'correct_tests as correctTests',
+      'accuracy'
     )
     .where('user_id', userId)
 }

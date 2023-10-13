@@ -95,16 +95,16 @@ export default function TestRecordTable({ data }) {
   }
 
   function createData(id, userName, result, accuracy, date) {
-    return { id, userName, result, date }
+    return { id, userName, result, accuracy, date }
   }
 
   const rows = data.map((element) => {
-    const { id, testDate, totalTests, correctTests, userName } = element
+    const { id, testDate, totalTests, correctTests, accuracy, userName } =
+      element
     const result = `${correctTests} / ${totalTests}`
     const date = new Date(testDate).toLocaleString()
-    const accuracy = (correctTests / totalTests).toFixed(2) * 100
 
-    return createData(id, userName, result, accuracy, date)
+    return createData(id, userName, result, (accuracy * 100).toFixed(2), date)
   })
 
   return (
