@@ -13,7 +13,7 @@ const initialState = {
 
 export const loadWords = createAsyncThunk(
   'words/fetchAllWords',
-  async (token, thunkAPI) => {
+  async (token) => {
     const response = await api.fetchWords(token)
     return response
   }
@@ -45,6 +45,7 @@ const wordsSlice = createSlice({
     builder.addCase(loadWords.fulfilled, (state, action) => {
       state.isLoadingWords = false
       state.words = [...action.payload]
+      console.log(JSON.parse(JSON.stringify(state)))
     })
     builder.addCase(loadWords.rejected, (state, action) => {
       state.failedToLoadWords = true

@@ -39,7 +39,7 @@ export default function BasicTable() {
 
   const dispatch = useDispatch()
   const words = useSelector(selectWords)
-  const loading = useSelector(isLoadingWords)
+  const loading = useSelector(isLoadingWords)  
 
   useEffect(() => {
     getAccessTokenSilently()
