@@ -14,4 +14,18 @@ function getHistoryByUserId(userId, db = connection) {
     .where('user_id', userId)
 }
 
-module.exports = { getHistoryByUserId }
+function getRecordsByWord(userId, db = connection) {
+  return db('words')
+    .join('word_accuracy', 'words.id', 'word_accuracy.word_id')
+    .select(
+      'words.id as id',
+      'words.word as word',
+      'word_accuracy.user_id as userId',
+      'total_tests as totalTests',
+      'correct_tests as correctTests',
+      'accuracy'
+    )
+    .where('word_accuracy.user_id', userId)
+}
+
+module.exports = { getHistoryByUserId, getRecordsByWord }

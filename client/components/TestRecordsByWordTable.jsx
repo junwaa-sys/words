@@ -16,7 +16,7 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
 import LastPageIcon from '@mui/icons-material/LastPage'
 
-export default function TestRecordTable({ data }) {
+export default function TestRecordByWordTable({ data }) {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -94,28 +94,32 @@ export default function TestRecordTable({ data }) {
     )
   }
 
-  function createData(id, userName, result, accuracy, date) {
-    return { id, userName, result, accuracy, date }
+  function createData(id, word, totalTests, correctTests, result, accuracy) {
+    return { id, word, totalTests, correctTests, result, accuracy }
   }
 
   const rows = data.map((element) => {
-    const { id, testDate, totalTests, correctTests, accuracy, userName } =
-      element
+    const { id, word, totalTests, correctTests, accuracy } = element
     const result = `${correctTests} / ${totalTests}`
-    const date = new Date(testDate).toLocaleString()
 
-    return createData(id, userName, result, (accuracy * 100).toFixed(2), date)
+    return createData(
+      id,
+      word,
+      totalTests,
+      correctTests,
+      result,
+      (accuracy * 100).toFixed(2)
+    )
   })
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 600 }} aria-label="custom pagination table">
+    <TableContainer component={Paper} sx={{ maxWidth: 750 }}>
+      <Table aria-label="custom pagination table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">ID</TableCell>
+            <TableCell align="center">WORD</TableCell>
             <TableCell align="right">RESULT (correct / total)</TableCell>
             <TableCell align="right">ACCURACY (%)</TableCell>
-            <TableCell align="right">TEST DATE</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -124,8 +128,8 @@ export default function TestRecordTable({ data }) {
             : rows
           ).map((row) => (
             <TableRow key={row.id}>
-              <TableCell style={{ width: 50 }} align="right">
-                {row.id}
+              <TableCell style={{ width: 160 }} align="center">
+                {row.word}
               </TableCell>
               <TableCell style={{ width: 160 }} align="right">
                 {row.result}
@@ -133,14 +137,11 @@ export default function TestRecordTable({ data }) {
               <TableCell style={{ width: 160 }} align="right">
                 {row.accuracy}
               </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.date}
-              </TableCell>
             </TableRow>
           ))}
           {emptyRows > 0 && (
             <TableRow style={{ height: 53 * emptyRows }}>
-              <TableCell colSpan={4} />
+              <TableCell colSpan={6} />
             </TableRow>
           )}
         </TableBody>
@@ -148,7 +149,7 @@ export default function TestRecordTable({ data }) {
           <TableRow>
             <TablePagination
               rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-              colSpan={5}
+              colSpan={3}
               count={rows.length}
               rowsPerPage={rowsPerPage}
               page={page}
