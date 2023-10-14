@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
-const pagesLoggedIn = ['words', 'word-test', 'test-history']
+const pagesLoggedIn = ['words', 'test', 'test-history']
 const settingsLoggedIn = ['Dashboard', 'Logout']
 const pagesNoLoggedIn = ['']
 const settingsNoLoggedIn = ['Login']
@@ -26,7 +26,6 @@ function AppLayout() {
   const [anchorElUser, setAnchorElUser] = useState(null)
   const [pages, setPages] = useState(pagesNoLoggedIn)
   const [settings, setSettings] = useState(settingsNoLoggedIn)
-  const [isExistingUser, setIsExistingUser] = useState(false)
 
   const navigate = useNavigate()
 
@@ -62,6 +61,11 @@ function AppLayout() {
       loginWithRedirect()
     }
   }
+
+  const handleLogin = () => {
+    loginWithRedirect()
+  }
+
   if (isLoading) {
     return <></>
   } else {
@@ -70,7 +74,6 @@ function AppLayout() {
         <AppBar position="static">
           <Container maxWidth="xl">
             <Toolbar disableGutters>
-              <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
               <Typography
                 variant="h6"
                 noWrap
@@ -86,7 +89,7 @@ function AppLayout() {
                   textDecoration: 'none',
                 }}
               >
-                LOGO
+                SPELL
               </Typography>
 
               <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -216,6 +219,11 @@ function AppLayout() {
             flexWrap: 'wrap',
           }}
         >
+          {!isAuthenticated && (
+            <Button variant="outlined" id="login" onClick={handleLogin}>
+              LOG IN
+            </Button>
+          )}
           <Outlet />
         </Container>
       </>

@@ -16,7 +16,7 @@ function getHistoryByUserId(userId, db = connection) {
 
 function getRecordsByWord(userId, db = connection) {
   return db('words')
-    .join('word_accuracy', 'words.id', 'word_accuracy.word_id')
+    .leftJoin('word_accuracy', 'words.id', 'word_accuracy.word_id')
     .select(
       'words.id as id',
       'words.word as word',
@@ -26,6 +26,7 @@ function getRecordsByWord(userId, db = connection) {
       'accuracy'
     )
     .where('word_accuracy.user_id', userId)
+    .orWhere('word_accuracy.user_id', null)
 }
 
 module.exports = { getHistoryByUserId, getRecordsByWord }
