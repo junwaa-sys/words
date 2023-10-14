@@ -70,12 +70,11 @@ function AppLayout() {
         <AppBar position="static">
           <Container maxWidth="xl">
             <Toolbar disableGutters>
-              <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
               <Typography
                 variant="h6"
                 noWrap
                 component="a"
-                href="/"
+                href="#"
                 sx={{
                   mr: 2,
                   display: { xs: 'none', md: 'flex' },
@@ -86,7 +85,7 @@ function AppLayout() {
                   textDecoration: 'none',
                 }}
               >
-                LOGO
+                SPELL
               </Typography>
 
               <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
