@@ -14,7 +14,7 @@ export default function App() {
           <Route path="/words" element={<Words />} />
           <Route path="/test-history" element={<TestHistory />} />
           <Route path="/word-test-start" element={<WordTest />} />
-          <Route path="/word-test" element={<TestSetup />} />
+          <Route path="/test" element={<TestSetup />} />
         </Route>
       </Routes>
     </BrowserRouter>
