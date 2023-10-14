@@ -1,6 +1,7 @@
 const Router = require('express')
 const { auth } = require('express-oauth2-jwt-bearer')
 const db = require('../db/testSetup')
+const checkJwt = require('../auth0')
 const testWordDb = require('../db/testWords')
 
 const router = Router()
@@ -14,12 +15,6 @@ function suffle(array) {
   }
   return array
 }
-
-const checkJwt = auth({
-  audience: 'https://spell-test/',
-  issuerBaseURL: 'https://tohora-2023-joon.au.auth0.com/',
-  tokenSigningAlg: 'RS256',
-})
 
 router.get('/setting/get', checkJwt, async (req, res) => {
   const userId = req.auth?.payload.sub
