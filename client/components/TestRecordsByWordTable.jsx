@@ -19,6 +19,25 @@ import LastPageIcon from '@mui/icons-material/LastPage'
 export default function TestRecordByWordTable({ data }) {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+
+  function createData(id, word, totalTests, correctTests, result, accuracy) {
+    return { id, word, totalTests, correctTests, result, accuracy }
+  }
+
+  const rows = data.map((element) => {
+    const { id, word, totalTests, correctTests, accuracy } = element
+    const result = `${correctTests} / ${totalTests}`
+
+    return createData(
+      id,
+      word,
+      totalTests,
+      correctTests,
+      result,
+      (accuracy * 100).toFixed(2)
+    )
+  })
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
@@ -93,24 +112,6 @@ export default function TestRecordByWordTable({ data }) {
       </Box>
     )
   }
-
-  function createData(id, word, totalTests, correctTests, result, accuracy) {
-    return { id, word, totalTests, correctTests, result, accuracy }
-  }
-
-  const rows = data.map((element) => {
-    const { id, word, totalTests, correctTests, accuracy } = element
-    const result = `${correctTests} / ${totalTests}`
-
-    return createData(
-      id,
-      word,
-      totalTests,
-      correctTests,
-      result,
-      (accuracy * 100).toFixed(2)
-    )
-  })
 
   return (
     <TableContainer component={Paper} sx={{ maxWidth: 750 }}>

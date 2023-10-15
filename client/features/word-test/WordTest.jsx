@@ -28,6 +28,7 @@ export default function WordTest() {
   const speech = new SpeechSynthesisUtterance()
   const { user } = useAuth0()
   const dispatch = useDispatch()
+  console.log(state.words)
 
   function handlePlay(e, i = currentIndex) {
     speech.text = words[i].word
