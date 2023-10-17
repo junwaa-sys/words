@@ -9,7 +9,7 @@ const root = createRoot(document.getElementById('app'))
 root.render(
   <Auth0Provider
     domain="tohora-2023-joon.au.auth0.com"
-    clientId="0tCJtNl7S1CxvO9qQQFw3m0LoBk5ZDfz"
+    clientId="6UkXfbwHPjudSU1TkULstHU2l2UdlodR"
     authorizationParams={{
       redirect_uri: window.location.origin,
       audience: 'https://spell-test/',
