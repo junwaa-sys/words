@@ -6,7 +6,7 @@ exports.up = function (knex) {
   return knex.schema.createTable('test_history', (table) => {
     table.increments('id')
     table.string('test_date')
-    table.integer('user_id')
+    table.string('user_id')
     table.string('user_name')
     table.string('result')
     table.integer('total_tests')

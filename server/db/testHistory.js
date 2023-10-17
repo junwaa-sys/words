@@ -12,6 +12,7 @@ function getHistoryByUserId(userId, db = connection) {
       'accuracy'
     )
     .where('user_id', userId)
+    .orderBy('accuracy', 'asc')
 }
 
 function getRecordsByWord(userId, db = connection) {
@@ -26,7 +27,7 @@ function getRecordsByWord(userId, db = connection) {
       'accuracy'
     )
     .where('word_accuracy.user_id', userId)
-    .orWhere('word_accuracy.user_id', null)
+    .orderBy('accuracy', 'asc')
 }
 
 module.exports = { getHistoryByUserId, getRecordsByWord }
