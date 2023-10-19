@@ -112,7 +112,6 @@ export default function TestRecordTable({ data }) {
       <Table sx={{ minWidth: 600 }} aria-label="custom pagination table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">ID</TableCell>
             <TableCell align="right">RESULT (correct / total)</TableCell>
             <TableCell align="right">ACCURACY (%)</TableCell>
             <TableCell align="right">TEST DATE</TableCell>
@@ -124,9 +123,6 @@ export default function TestRecordTable({ data }) {
             : rows
           ).map((row) => (
             <TableRow key={row.id}>
-              <TableCell style={{ width: 50 }} align="right">
-                {row.id}
-              </TableCell>
               <TableCell style={{ width: 160 }} align="right">
                 {row.result}
               </TableCell>
