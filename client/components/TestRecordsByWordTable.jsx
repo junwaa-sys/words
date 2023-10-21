@@ -21,7 +21,7 @@ import { visuallyHidden } from '@mui/utils'
 export default function TestRecordByWordTable({ data }) {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
-  const [order, setOrder] = React.useState('asc')
+  const [order, setOrder] = React.useState('desc')
   const [orderBy, setOrderBy] = React.useState('word')
 
   function createData(id, word, totalTests, correctTests, result, accuracy) {

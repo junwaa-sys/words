@@ -136,8 +136,8 @@ export default function TestRecordTable({ data }) {
   })
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 600 }} aria-label="custom pagination table">
+    <TableContainer component={Paper} sx={{ maxWidth: 750 }}>
+      <Table aria-label="custom pagination table">
         <TableHead>
           <TableRow>
             <TableCell
