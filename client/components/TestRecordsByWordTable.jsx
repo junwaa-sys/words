@@ -15,13 +15,33 @@ import FirstPageIcon from '@mui/icons-material/FirstPage'
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
 import LastPageIcon from '@mui/icons-material/LastPage'
+import TableSortLabel from '@mui/material/TableSortLabel'
+import { visuallyHidden } from '@mui/utils'
 
 export default function TestRecordByWordTable({ data }) {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const [order, setOrder] = React.useState('asc')
+  const [orderBy, setOrderBy] = React.useState('word')
 
   function createData(id, word, totalTests, correctTests, result, accuracy) {
     return { id, word, totalTests, correctTests, result, accuracy }
+  }
+
+  const handleRequestSort = (e, property) => {
+    const isAsc = orderBy === property && order === 'asc'
+    setOrder(isAsc ? 'desc' : 'asc')
+    setOrderBy(property)
+  }
+
+  function descendingComparator(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+      return -1
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1
+    }
+    return 0
   }
 
   const rows = data.map((element) => {
@@ -118,14 +138,59 @@ export default function TestRecordByWordTable({ data }) {
       <Table aria-label="custom pagination table">
         <TableHead>
           <TableRow>
-            <TableCell align="center">WORD</TableCell>
+            <TableCell
+              align="center"
+              sortDirection={orderBy === 'word' ? order : false}
+            >
+              <TableSortLabel
+                id="word"
+                active={orderBy === 'word'}
+                direction={orderBy === 'word' ? order : 'asc'}
+                onClick={(e) => handleRequestSort(e, 'word')}
+              >
+                Word
+                {orderBy === 'word' ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc'
+                      ? 'sorted descending'
+                      : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
             <TableCell align="right">RESULT (correct / total)</TableCell>
-            <TableCell align="right">ACCURACY (%)</TableCell>
+            <TableCell
+              align="right"
+              sortDirection={orderBy === 'accuracy' ? order : false}
+            >
+              {' '}
+              <TableSortLabel
+                id="accuracy"
+                active={orderBy === 'accuracy'}
+                direction={orderBy === 'accuracy' ? order : 'asc'}
+                onClick={(e) => handleRequestSort(e, 'accuracy')}
+              >
+                Accuracy (%)
+                {orderBy === 'accuracy' ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc'
+                      ? 'sorted descending'
+                      : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            ? rows
+                .sort((a, b) =>
+                  order === 'asc'
+                    ? descendingComparator(a, b, orderBy)
+                    : -descendingComparator(a, b, orderBy)
+                )
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
           ).map((row) => (
             <TableRow key={row.id}>

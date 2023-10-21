@@ -15,10 +15,14 @@ import FirstPageIcon from '@mui/icons-material/FirstPage'
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
 import LastPageIcon from '@mui/icons-material/LastPage'
+import TableSortLabel from '@mui/material/TableSortLabel'
+import { visuallyHidden } from '@mui/utils'
 
 export default function TestRecordTable({ data }) {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const [order, setOrder] = React.useState('desc')
+  const [orderBy, setOrderBy] = React.useState('dateNum')
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
@@ -30,6 +34,22 @@ export default function TestRecordTable({ data }) {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
+  }
+
+  const handleRequestSort = (e, property) => {
+    const isAsc = orderBy === property && order === 'asc'
+    setOrder(isAsc ? 'desc' : 'asc')
+    setOrderBy(property)
+  }
+
+  function descendingComparator(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+      return -1
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1
+    }
+    return 0
   }
 
   function TablePaginationActions(props) {
@@ -94,17 +114,25 @@ export default function TestRecordTable({ data }) {
     )
   }
 
-  function createData(id, userName, result, accuracy, date) {
-    return { id, userName, result, accuracy, date }
+  function createData(id, userName, result, accuracy, dateStr, dateNum) {
+    return { id, userName, result, accuracy, dateStr, dateNum }
   }
 
   const rows = data.map((element) => {
     const { id, testDate, totalTests, correctTests, accuracy, userName } =
       element
     const result = `${correctTests} / ${totalTests}`
-    const date = new Date(testDate).toLocaleString()
+    const dateStr = new Date(testDate).toLocaleString()
+    const dateNum = new Date(testDate).getTime()
 
-    return createData(id, userName, result, (accuracy * 100).toFixed(2), date)
+    return createData(
+      id,
+      userName,
+      result,
+      (accuracy * 100).toFixed(2),
+      dateStr,
+      dateNum
+    )
   })
 
   return (
@@ -112,14 +140,63 @@ export default function TestRecordTable({ data }) {
       <Table sx={{ minWidth: 600 }} aria-label="custom pagination table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">RESULT (correct / total)</TableCell>
-            <TableCell align="right">ACCURACY (%)</TableCell>
-            <TableCell align="right">TEST DATE</TableCell>
+            <TableCell
+              align="right"
+              sortDirection={orderBy === 'result' ? order : false}
+            >
+              Result (correct / Total)
+            </TableCell>
+            <TableCell
+              align="right"
+              sortDirection={orderBy === 'accuracy' ? order : false}
+            >
+              <TableSortLabel
+                id="accuracy"
+                active={orderBy === 'accuracy'}
+                direction={orderBy === 'accuracy' ? order : 'asc'}
+                onClick={(e) => handleRequestSort(e, 'accuracy')}
+              >
+                Accuracy (%)
+                {orderBy === 'accuracy' ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc'
+                      ? 'sorted descending'
+                      : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
+            <TableCell
+              align="right"
+              sortDirection={orderBy === 'date' ? order : false}
+            >
+              <TableSortLabel
+                id="date"
+                active={orderBy === 'dateNum'}
+                direction={orderBy === 'dateNum' ? order : 'asc'}
+                onClick={(e) => handleRequestSort(e, 'dateNum')}
+              >
+                Date
+                {orderBy === 'date' ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc'
+                      ? 'sorted descending'
+                      : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            ? rows
+                .sort((a, b) =>
+                  order === 'asc'
+                    ? a[orderBy] - b[orderBy]
+                    : b[orderBy] - a[orderBy]
+                )
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
           ).map((row) => (
             <TableRow key={row.id}>
@@ -130,7 +207,7 @@ export default function TestRecordTable({ data }) {
                 {row.accuracy}
               </TableCell>
               <TableCell style={{ width: 160 }} align="right">
-                {row.date}
+                {row.dateStr}
               </TableCell>
             </TableRow>
           ))}
