@@ -8,7 +8,6 @@ import { Container, Typography } from '@mui/material'
 import {
   loadHistory,
   loadRecordByWord,
-  isLoadingHistoryByWord,
   isLoadingHistory,
 } from './testHistorySlice'
 import { useAuth0 } from '@auth0/auth0-react'
@@ -20,6 +19,7 @@ export default function TestHistory() {
   const [history, setHistory] = useState([])
   const [recordByWord, setRecordByWord] = useState([])
   const [recordType, setRecordType] = useState('total')
+  const [sort, setSort] = useState('ASC')
   const { getAccessTokenSilently } = useAuth0()
   const dispatch = useDispatch()
 
@@ -40,6 +40,7 @@ export default function TestHistory() {
   function handleButtonClick(type) {
     setRecordType(type)
   }
+
   useEffect(() => {
     loadTotalRecords()
     loadWordTestRecords()

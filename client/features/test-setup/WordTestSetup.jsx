@@ -85,7 +85,13 @@ export default function TestSetup() {
 
   return (
     <Container
-      sx={{ width: 400, alignItems: 'center', justifyItems: 'center' }}
+      sx={{
+        width: 400,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyItems: 'center',
+      }}
     >
       <TestSetupForm
         numberOfWord={selectedNumberOfWord}

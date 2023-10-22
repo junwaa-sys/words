@@ -18,10 +18,11 @@ export default function TestSetupForm({
 }) {
   return (
     <>
-      <FormControl fullWidth sx={{ m: 2 }}>
+      <FormControl sx={{ m: 2 }}>
         <InputLabel id="number-of-word">Number of Word</InputLabel>
         <Select
-          size="small"
+          sx={{ width: 150 }}
+          size="large"
           labelId="number-of-word"
           id="number-of-word"
           name="number-of-word"
@@ -35,10 +36,11 @@ export default function TestSetupForm({
           <MenuItem value={25}>25 Words</MenuItem>
         </Select>
       </FormControl>
-      <FormControl fullWidth sx={{ m: 2 }}>
+      <FormControl sx={{ m: 2 }}>
         <InputLabel id="max-accuracy">Max Accuracy</InputLabel>
         <Select
-          size="small"
+          size="large"
+          sx={{ width: 150 }}
           labelId="max-accuracy"
           id="max-accuracy"
           name="max-accuracy"
