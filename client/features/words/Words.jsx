@@ -151,9 +151,15 @@ export default function BasicTable() {
           <Table size="small" aria-label="word table">
             <TableHead>
               <TableRow>
-                <TableCell align="left">WORD</TableCell>
-                <TableCell align="left">USER(Create)</TableCell>
-                <TableCell align="left">USER(Update)</TableCell>
+                <TableCell sx={{ width: 300 }} align="left">
+                  WORD
+                </TableCell>
+                <TableCell sx={{ width: 150 }} align="left">
+                  USER(Create)
+                </TableCell>
+                <TableCell sx={{ width: 150 }} align="left">
+                  USER(Update)
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
