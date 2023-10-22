@@ -8,7 +8,7 @@ export default function AnswerInput({
   isDisabled,
 }) {
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{ marginTop: 10 }}>
       <FormControl disabled={isDisabled}>
         <Input
           value={answer}

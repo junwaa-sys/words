@@ -39,7 +39,7 @@ export default function BasicTable() {
 
   const dispatch = useDispatch()
   const words = useSelector(selectWords)
-  const loading = useSelector(isLoadingWords)  
+  const loading = useSelector(isLoadingWords)
 
   useEffect(() => {
     getAccessTokenSilently()
@@ -147,11 +147,10 @@ export default function BasicTable() {
   } else {
     return (
       <>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
+        <TableContainer sx={{ maxWidth: 600 }} component={Paper}>
+          <Table size="small" aria-label="word table">
             <TableHead>
               <TableRow>
-                <TableCell align="left">ID</TableCell>
                 <TableCell align="left">WORD</TableCell>
                 <TableCell align="left">USER(Create)</TableCell>
                 <TableCell align="left">USER(Update)</TableCell>
@@ -165,9 +164,6 @@ export default function BasicTable() {
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   onClick={handleTableRowClick}
                 >
-                  <TableCell id={row.id} align="left">
-                    {row.id}
-                  </TableCell>
                   <TableCell id={row.id} align="left">
                     {row.word}
                   </TableCell>

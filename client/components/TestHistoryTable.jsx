@@ -137,7 +137,7 @@ export default function TestRecordTable({ data }) {
 
   return (
     <TableContainer component={Paper} sx={{ maxWidth: 750 }}>
-      <Table aria-label="custom pagination table">
+      <Table size="small" aria-label="test results table">
         <TableHead>
           <TableRow>
             <TableCell
@@ -199,7 +199,7 @@ export default function TestRecordTable({ data }) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
           ).map((row) => (
-            <TableRow key={row.id}>
+            <TableRow key={row.id} hover={true}>
               <TableCell style={{ width: 160 }} align="right">
                 {row.result}
               </TableCell>

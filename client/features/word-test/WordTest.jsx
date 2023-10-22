@@ -79,23 +79,37 @@ export default function WordTest() {
 
   if (words == undefined) {
     return (
-      <Box sx={{ alignContent: 'center', justifyContent: 'center' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignContent: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <CircularProgress />
       </Box>
     )
   } else {
     return (
       <>
-        <Container>
+        <Container
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            m: 2,
+          }}
+        >
           <h1>
             Question: {currentIndex + 1} / {words.length}
           </h1>
           <Button
-            size="small"
+            size="large"
             startIcon={<PlayCircleIcon />}
             variant="outlined"
             onClick={handlePlay}
             disabled={isDisabled}
+            sx={{ m: 5 }}
           >
             {!words ? <CircularProgress /> : 'PLAY'}
           </Button>

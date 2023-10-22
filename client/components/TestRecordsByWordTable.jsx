@@ -135,7 +135,7 @@ export default function TestRecordByWordTable({ data }) {
 
   return (
     <TableContainer component={Paper} sx={{ maxWidth: 750 }}>
-      <Table aria-label="custom pagination table">
+      <Table size="small" aria-label="result by word table">
         <TableHead>
           <TableRow>
             <TableCell
@@ -193,7 +193,7 @@ export default function TestRecordByWordTable({ data }) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
           ).map((row) => (
-            <TableRow key={row.id}>
+            <TableRow key={row.id} hover={true}>
               <TableCell style={{ width: 160 }} align="center">
                 {row.word}
               </TableCell>
