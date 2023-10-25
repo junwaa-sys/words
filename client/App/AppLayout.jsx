@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 
-const pagesLoggedIn = ['words', 'test', 'test-history']
+const pagesLoggedIn = ['words', 'test', 'test-history', 'word-bingo']
 const settingsLoggedIn = ['Dashboard', 'Logout']
 const pagesNoLoggedIn = ['']
 const settingsNoLoggedIn = ['Login']

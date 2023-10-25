@@ -1,5 +1,4 @@
 const Router = require('express')
-const { auth } = require('express-oauth2-jwt-bearer')
 const db = require('../db/testHistory')
 const checkJwt = require('../auth0')
 

@@ -5,6 +5,7 @@ import WordTest from '../features/word-test/WordTest'
 import AppLayout from './AppLayout'
 import TestHistory from '../features/test-history/TestHistory'
 import TestSetup from '../features/test-setup/WordTestSetup'
+import WordBingo from '../features/word-bingo/WordBingo'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/test-history" element={<TestHistory />} />
           <Route path="/word-test-start" element={<WordTest />} />
           <Route path="/test" element={<TestSetup />} />
+          <Route path="/word-bingo" element={<WordBingo />} />
         </Route>
       </Routes>
     </BrowserRouter>
