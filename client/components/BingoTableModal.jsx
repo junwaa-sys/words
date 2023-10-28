@@ -1,7 +1,16 @@
 import React from 'react'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Card from '@mui/material/Card'
+import CardActions from '@mui/material/CardActions'
+import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import Modal from '@mui/material/Modal'
+import Grid from '@mui/material/Grid'
 
 const style = {
   position: 'absolute',
@@ -15,19 +24,71 @@ const style = {
   p: 4,
 }
 
-export default function BingoWordModal({ open, handleClose, addWord }) {
+export default function BingoWordModal({
+  open,
+  handleClose,
+  addWord,
+  words,
+  gridIndex,
+}) {
+  console.log(gridIndex)
+  const cards = words.map((word) => {
+    return (
+      <Grid key={word.id} item xs={4}>
+        <Card>
+          <CardContent>
+            <Typography sx={{ fontSize: 15 }} color="text.primary" gutterBottom>
+              {word.word}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button
+              size="small"
+              onClick={() => {
+                addWord({
+                  gridIndex: gridIndex,
+                  wordId: word.id,
+                  word: word.word,
+                })
+              }}
+            >
+              ADD
+            </Button>
+          </CardActions>
+        </Card>
+      </Grid>
+    )
+  })
+
   return (
-    <Modal
+    <Dialog
       open={open}
       onClose={handleClose}
-      aria-labelledby="bingo-word-modal"
-      aria-describedby="modal-bingo-word"
+      scroll="paper"
+      aria-labelledby="words"
+      aria-describedby="words-for-bingo"
     >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Choose word to add
-        </Typography>
-      </Box>
-    </Modal>
+      <DialogTitle id="words">Bingo Words</DialogTitle>
+      <DialogContent dividers={scroll === 'paper'}>
+        <Grid container spacing={2}>
+          {cards}
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+      </DialogActions>
+    </Dialog>
+    // <Modal
+    //   open={open}
+    //   onClose={handleClose}
+    //   aria-labelledby="bingo-word-modal"
+    //   aria-describedby="modal-bingo-word"
+    // >
+    //   <Box sx={style}>
+    //     <Typography id="modal-modal-title" variant="h6" component="h2">
+    //       Choose word to add
+    //     </Typography>
+    //   </Box>
+    // </Modal>
   )
 }

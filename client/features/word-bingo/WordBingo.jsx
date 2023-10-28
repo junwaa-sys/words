@@ -22,11 +22,13 @@ import Box from '@mui/material/Box'
 
 export default function WordBingo() {
   const [open, setOpen] = useState(false)
+  const [words, setWords] = useState([])
   const [bingoWords, setBingoWords] = useState([])
   const [isStart, setIsStart] = useState(false)
   const [gameRoomData, setGameRoomDate] = useState([])
   const [gameId, setGameId] = useState('')
   const [bingoSize, setBingoSize] = useState(9)
+  const [gridIndex, setGridIndex] = useState(null)
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -44,7 +46,7 @@ export default function WordBingo() {
   async function loadBingoWords() {
     const token = await getAccessTokenSilently()
     const response = await dispatch(loadWords(token))
-    setBingoWords(response.payload)
+    setWords(response.payload)
   }
 
   useEffect(() => {
@@ -52,12 +54,13 @@ export default function WordBingo() {
     loadBingoWords()
   }, [])
 
-  function addWord(word) {
-    setBingoWords((prev) => [...prev, word])
+  function addWord(wordDetail) {
+    setBingoWords((prev) => [...prev, wordDetail])
+    setOpen(false)
   }
 
-  function handleOpen(gridId) {
-    console.log(gridId)
+  function handleOpen(index) {
+    setGridIndex(index)
     setOpen(true)
   }
 
@@ -124,6 +127,8 @@ export default function WordBingo() {
           open={open}
           handleClose={handleClose}
           addWord={addWord}
+          words={words}
+          gridIndex={gridIndex}
         />
       </>
     )
