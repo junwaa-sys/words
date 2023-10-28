@@ -14,4 +14,16 @@ router.get('/get', checkJwt, async (req, res) => {
   }
 })
 
+router.post('/create', checkJwt, async (req, res) => {
+  try {
+    //call db function to create game
+    const auth0Id = req.auth?.payload.sub
+    const userName = req.body.userName
+    const response = await db.addGame(auth0Id, userName)
+    res.json(response)
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 module.exports = router

@@ -4,11 +4,18 @@ import * as api from '../../Apis/bingo'
 const initialState = {
   games: [],
   isLoadingGames: false,
-  faileToLoadGames: false,
+  failedToLoadGames: false,
+  isLoadingAddGame: false,
+  fialedToAddGame: false,
 }
 
 export const loadGames = createAsyncThunk('bingo/fetchGames', async (token) => {
   const response = await api.getLiveGames(token)
+  return response
+})
+
+export const addGame = createAsyncThunk('bingo/addGame', async (data) => {
+  const response = await api.addGame(data)
   return response
 })
 
@@ -25,11 +32,22 @@ const bingoSlice = createSlice({
     })
     builder.addCase(loadGames.rejected, (state, action) => {
       state.isLoadingGames = false
-      state.faileToLoadGames = true
+      state.failedToLoadGames = true
+    })
+    builder.addCase(addGame.pending, (state, action) => {
+      state.isLoadingAddGame = true
+    })
+    builder.addCase(addGame.fulfilled, (state, action) => {
+      state.isLoadingAddGame = false
+    })
+    builder.addCase(addGame.rejected, (state, action) => {
+      state.isLoadingAddGame = false
+      state.fialedToAddGame = true
     })
   },
 })
 
 export default bingoSlice.reducer
 export const isLoadingGames = (state) => state.isLoadingGames
+export const isLoadingAddGame = (state) => state.isLoadingAddGame
 export const selectGames = (state) => state.bingo.games

@@ -15,16 +15,22 @@ import FirstPageIcon from '@mui/icons-material/FirstPage'
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
 import LastPageIcon from '@mui/icons-material/LastPage'
-import TableSortLabel from '@mui/material/TableSortLabel'
-import { visuallyHidden } from '@mui/utils'
 import { Button } from '@mui/material'
 
-export default function BingoGameTable({ data }) {
+export default function BingoGameTable({ data, handleJoinGame }) {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
-  const [order, setOrder] = React.useState('desc')
-  const [orderBy, setOrderBy] = React.useState('dateNum')
+
   //table of current game lists for users to join
+  function createData(id, host) {
+    return { id, host }
+  }
+
+  const rows = data.map((element) => {
+    const { id, host } = element
+    return createData(id, host)
+  })
+
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
 
@@ -35,22 +41,6 @@ export default function BingoGameTable({ data }) {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
-  }
-
-  const handleRequestSort = (e, property) => {
-    const isAsc = orderBy === property && order === 'asc'
-    setOrder(isAsc ? 'desc' : 'asc')
-    setOrderBy(property)
-  }
-
-  function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1
-    }
-    return 0
   }
 
   function TablePaginationActions(props) {
@@ -115,24 +105,13 @@ export default function BingoGameTable({ data }) {
     )
   }
 
-  function createData(id, playerOne) {
-    return { id, playerOne }
-  }
-
-  const rows = data.map((element) => {
-    const { id, playerOne } = element
-
-    return createData(id, playerOne)
-  })
-
   return (
     <TableContainer component={Paper} sx={{ maxWidth: 750 }}>
       <Table size="small" aria-label="bingo game table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">Game No</TableCell>
-            <TableCell align="right">Host</TableCell>
-            <TableCell align="right">Join</TableCell>
+            <TableCell align="center">Host</TableCell>
+            <TableCell align="center">Join</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -141,14 +120,16 @@ export default function BingoGameTable({ data }) {
             : rows
           ).map((row) => (
             <TableRow key={row.id} hover={true}>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.id}
+              <TableCell style={{ width: 160 }} align="center">
+                {row.host}
               </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                {row.playerOne}
-              </TableCell>
-              <TableCell style={{ width: 160 }} align="right">
-                <Button>Join</Button>
+              <TableCell style={{ width: 160 }} align="center">
+                <Button
+                  variant="outlined"
+                  onClick={(e) => handleJoinGame(row.id)}
+                >
+                  Join
+                </Button>
               </TableCell>
             </TableRow>
           ))}

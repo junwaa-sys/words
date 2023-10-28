@@ -3,14 +3,18 @@ const connection = require('./connection')
 
 function getLiveGames(db = connection) {
   return db('bingo_games')
-    .select(
-      'id',
-      'player_one as playerOne',
-      'player_two as playerTwo',
-      'status',
-      'created_at'
-    )
+    .select('id', 'host', 'status')
     .where('status', 'active')
 }
 
-module.exports = { getLiveGames }
+function addGame(auth0Id, userName, db = connection) {
+  return db('bingo_games')
+    .insert({
+      host: userName,
+      host_user_id: auth0Id,
+      status: 'active',
+    })
+    .returning(['id', 'host', 'status'])
+}
+
+module.exports = { getLiveGames, addGame }

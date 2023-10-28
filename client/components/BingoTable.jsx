@@ -1,8 +1,11 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 import { Button } from '@mui/material'
+import { RowingSharp } from '@mui/icons-material'
 
-export default function BingoTable({ handleOpen, bingoWords }) {
+export default function BingoTable({ handleOpen, gameId, bingoSize }) {
+  const tableColumn = Math.sqrt(bingoSize)
+
   function Item(props) {
     const { sx, ...other } = props
     return (
@@ -22,54 +25,27 @@ export default function BingoTable({ handleOpen, bingoWords }) {
       />
     )
   }
+
+  const items = []
+  for (let i = 0; i < bingoSize; i++) {
+    items.push(
+      <Item key={i}>
+        <Button variant="contained" size="small" onClick={() => handleOpen(i)}>
+          ADD Word
+        </Button>
+      </Item>
+    )
+  }
+
   return (
     <div style={{ width: '100%' }}>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
-        <Item>
-          <Button variant="contained" size="small" onClick={handleOpen}>
-            ADD Word
-          </Button>
-        </Item>
-        <Item>
-          <Button variant="contained" size="small">
-            ADD Word
-          </Button>
-        </Item>
-        <Item>
-          <Button variant="contained" size="small">
-            ADD Word
-          </Button>
-        </Item>
-        <Item>
-          <Button variant="contained" size="small">
-            ADD Word
-          </Button>
-        </Item>
-        <Item>
-          <Button variant="contained" size="small">
-            ADD Word
-          </Button>
-        </Item>
-        <Item>
-          <Button variant="contained" size="small">
-            ADD Word
-          </Button>
-        </Item>
-        <Item>
-          <Button variant="contained" size="small">
-            ADD Word
-          </Button>
-        </Item>
-        <Item>
-          <Button variant="contained" size="small">
-            ADD Word
-          </Button>
-        </Item>
-        <Item>
-          <Button variant="contained" size="small">
-            ADD Word
-          </Button>
-        </Item>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${tableColumn}, 1fr)`,
+        }}
+      >
+        {items}
       </Box>
     </div>
   )

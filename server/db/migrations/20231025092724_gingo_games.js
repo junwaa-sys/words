@@ -5,8 +5,10 @@
 exports.up = function (knex) {
   return knex.schema.createTable('bingo_games', (table) => {
     table.increments('id')
-    table.string('player_one')
-    table.string('player_two')
+    table.string('host')
+    table.string('host_user_id')
+    table.string('guest')
+    table.string('guest_user_id')
     table.string('status')
     table.timestamps(true, true)
   })
