@@ -31,7 +31,6 @@ export default function BingoWordModal({
   words,
   gridIndex,
 }) {
-  console.log(gridIndex)
   const cards = words.map((word) => {
     return (
       <Grid key={word.id} item xs={4}>

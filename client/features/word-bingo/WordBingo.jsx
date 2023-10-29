@@ -55,7 +55,10 @@ export default function WordBingo() {
   }, [])
 
   function addWord(wordDetail) {
-    setBingoWords((prev) => [...prev, wordDetail])
+    setBingoWords((prev) => [...prev, { ...wordDetail, isMatch: false }])
+    setWords((prev) =>
+      prev.filter((element) => element.id != wordDetail.wordId)
+    )
     setOpen(false)
   }
 
@@ -122,6 +125,7 @@ export default function WordBingo() {
           handleOpen={handleOpen}
           gameId={gameId}
           bingoSize={bingoSize}
+          bingoWords={bingoWords}
         />
         <BingoWordModal
           open={open}

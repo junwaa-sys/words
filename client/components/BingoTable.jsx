@@ -1,9 +1,14 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 import { Button } from '@mui/material'
-import { RowingSharp } from '@mui/icons-material'
+import Typography from '@mui/material/Typography'
 
-export default function BingoTable({ handleOpen, gameId, bingoSize }) {
+export default function BingoTable({
+  handleOpen,
+  gameId,
+  bingoSize,
+  bingoWords,
+}) {
   const tableColumn = Math.sqrt(bingoSize)
 
   function Item(props) {
@@ -28,11 +33,23 @@ export default function BingoTable({ handleOpen, gameId, bingoSize }) {
 
   const items = []
   for (let i = 0; i < bingoSize; i++) {
+    const gridWord = bingoWords.filter((word) => word.gridIndex === i)
+
     items.push(
       <Item key={i}>
-        <Button variant="contained" size="small" onClick={() => handleOpen(i)}>
-          ADD Word
-        </Button>
+        {gridWord.length > 0 ? (
+          <Typography variant="string" sx={{ alignItems: 'center' }}>
+            {gridWord[0].word}
+          </Typography>
+        ) : (
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => handleOpen(i)}
+          >
+            ADD Word
+          </Button>
+        )}
       </Item>
     )
   }
