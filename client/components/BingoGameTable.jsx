@@ -20,7 +20,6 @@ import { Button } from '@mui/material'
 export default function BingoGameTable({ data, handleJoinGame }) {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
-
   //table of current game lists for users to join
   function createData(id, host) {
     return { id, host }
@@ -42,6 +41,7 @@ export default function BingoGameTable({ data, handleJoinGame }) {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
   }
+
 
   function TablePaginationActions(props) {
     const theme = useTheme()

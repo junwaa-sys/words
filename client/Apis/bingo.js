@@ -31,3 +31,19 @@ export async function addGame(data) {
     console.log(error)
   }
 }
+
+export async function getWords(token) {
+  try {
+    //fetch words
+    const response = await fetch('api/bingo/words/get', {
+      method: 'GET',
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    })
+    const json = await response.json()
+    return json
+  } catch (error) {
+    console.log(error)
+  }
+}

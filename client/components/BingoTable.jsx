@@ -2,12 +2,16 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import { Button } from '@mui/material'
 import Typography from '@mui/material/Typography'
+import Backdrop from '@mui/material/Backdrop'
+import CircularProgress from '@mui/material/CircularProgress'
 
 export default function BingoTable({
   handleOpen,
-  gameId,
   bingoSize,
   bingoWords,
+  handleReady,
+  handleExit,
+  isGuestIn,
 }) {
   const tableColumn = Math.sqrt(bingoSize)
 
@@ -56,6 +60,13 @@ export default function BingoTable({
 
   return (
     <div style={{ width: '100%' }}>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={!isGuestIn}
+      >
+        <CircularProgress color="inherit" />
+        Waiting for Oppornent
+      </Backdrop>
       <Box
         sx={{
           display: 'grid',
@@ -63,6 +74,21 @@ export default function BingoTable({
         }}
       >
         {items}
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          m: 3,
+          alignContent: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Button sx={{ m: 1 }} variant="outlined" onClick={handleReady}>
+          Ready
+        </Button>
+        <Button sx={{ m: 1 }} variant="outlined" onClick={handleExit}>
+          Exit
+        </Button>
       </Box>
     </div>
   )
