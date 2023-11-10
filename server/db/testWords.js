@@ -8,6 +8,7 @@ function getWordsForTest(auth0Id, maxAccuracy, db = connection) {
     .select('words.id as word_id', 'words.word')
     .where('word_accuracy.user_id', auth0Id)
     .andWhere('accuracy', '<=', maxAccuracy)
+    .orWhere('accuracy', null)
 }
 
 function getWordsTestResults({ userId, wordId }, db = connection) {
