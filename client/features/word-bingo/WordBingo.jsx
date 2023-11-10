@@ -27,7 +27,7 @@ export default function WordBingo() {
   const [open, setOpen] = useState(false)
   const [words, setWords] = useState([])
   const [bingoWords, setBingoWords] = useState([])
-  const [isStart, setIsStart] = useState(false)
+  const [isShow, setIsShow] = useState(false)
   const [gameRoomData, setGameRoomDate] = useState([])
   const [gameId, setGameId] = useState('')
   const [bingoSize, setBingoSize] = useState(9)
@@ -36,6 +36,13 @@ export default function WordBingo() {
   const [isGuestInAlertShow, setIsGuestInAlertShow] = useState(false)
   const [hostName, setHostName] = useState('')
   const [guestName, setGuestName] = useState('')
+  const [isReadyDisabled, setIsReadyDisabled] = useState(true)
+  const [isHost, setIsHost] = useState(false)
+  const [waitingMessage, setWaitingMessage] = useState('')
+  const [isReady, setIsReady] = useState(false)
+  const [isOpponentReady, setIsOpponentReady] = useState(false)
+  const [order, setOrder] = useState(0)
+  const [backDropMessage, setBackDropMessage] = useState('')
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -61,7 +68,7 @@ export default function WordBingo() {
   useEffect(() => {
     loadLiveGames()
     loadBingoWords()
-  }, [])
+  }, [gameId])
 
   useEffect(() => {
     socket.connect()
@@ -73,8 +80,16 @@ export default function WordBingo() {
 
   useEffect(() => {
     socket.on(gameId, (arg) => {
-      console.log(arg)
-      handleGuestJoin(arg)
+      if (arg.type === 'guest-join') {
+        handleGuestJoin(arg.guestName)
+        if (arg.order === 0) {
+          setOrder(1)
+        }
+      }
+      if (arg.type === 'ready' && arg.isHost != isHost) {
+        setIsOpponentReady(arg.isReady)
+        setIsReady(arg.isReady)
+      }
     })
     return () => {
       socket.off(gameId)
@@ -87,6 +102,7 @@ export default function WordBingo() {
       prev.filter((element) => element.id != wordDetail.wordId)
     )
     setOpen(false)
+    setIsReadyDisabled(!isBingoTableFill())
   }
 
   function handleOpen(index) {
@@ -101,20 +117,26 @@ export default function WordBingo() {
   function handleGuestJoin(guestName) {
     // handle guest join event
     setIsGuestIn(true)
+    setIsReady(true)
     setIsGuestInAlertShow(true)
     setGuestName(guestName)
   }
 
-  function handleJoinGame(gameId) {
+  function handleJoinGame(gameId, hostName) {
     setGameId(gameId)
+    setHostName(hostName)
     setIsGuestIn(true)
-    setIsStart(true)
+    setIsShow(true)
+    setIsReady(true)
+
     const roomInfo = {
       gameRoomId: gameId,
       guest: user.name,
       isGuestReady: false,
     }
     connectGameRoom(false, roomInfo)
+    setGuestName(user.name)
+    setIsHost(false)
   }
 
   async function handleAddGame() {
@@ -123,9 +145,12 @@ export default function WordBingo() {
     const userName = user.name
     const response = await dispatch(addGame({ token, userName }))
     const gameRoomId = response.payload[0].id
+    setBackDropMessage('Waiting for opponent to enter.')
     setGameId(gameRoomId)
     setIsGuestIn(false)
-    setIsStart(true)
+    setIsHost(true)
+    setIsShow(true)
+    setHostName(userName)
     const roomInfo = {
       gameRoomId,
       host: user.name,
@@ -158,18 +183,43 @@ export default function WordBingo() {
     socket.emit(gameRoomId, info)
   }
 
+  function emitReady(gameRoomId) {
+    socket.emit(gameRoomId, { isHost: isHost, isReady: true })
+  }
+
+  function emitWordSelection(word) {
+    socket.emit(gameRoomId, word)
+  }
+
   function handleReady() {
     // set isReady value true.
+    emitReady(gameId)
+    setBackDropMessage('Waiting for opponent to ready.')
+    if (isOpponentReady) {
+      setIsReady(true)
+    } else {
+      setIsReady(false)
+    }
+  }
+
+  function isBingoTableFill() {
+    // return true if bingo table is all filled
+    return bingoWords.length === bingoSize - 1
   }
 
   function handleExit() {
     // handle when user want to exit game before it finishes
-    setIsStart(false)
+    setIsShow(false)
     setGameId('')
+    setBingoWords([])
+  }
+
+  function handleBingoWordSelect(word) {
+    emitWordSelection()
   }
 
   //if game is not started display game list and option to create new game
-  if (!isStart) {
+  if (!isShow) {
     return (
       <>
         <Container
@@ -219,7 +269,12 @@ export default function WordBingo() {
           bingoSize={bingoSize}
           bingoWords={bingoWords}
           handleExit={handleExit}
-          isGuestIn={isGuestIn}
+          isReady={isReady}
+          handleReady={handleReady}
+          isReadyDisabled={isReadyDisabled}
+          guestName={guestName}
+          hostName={hostName}
+          backDropMessage={backDropMessage}
         />
         <BingoWordModal
           open={open}

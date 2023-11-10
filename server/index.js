@@ -1,8 +1,9 @@
 const express = require('express')
 const { Server } = require('socket.io')
 const { createServer } = require('node:http')
-const session = require('express-session')
+
 const db = require('./db/bingo')
+const util = require('./util/bingo')
 
 const wordRoutes = require('./routes/wordRoutes')
 const testRoutes = require('./routes/testRoutes')
@@ -24,15 +25,22 @@ app.use('/api/test/history', testHistoryRoutes)
 app.use('/api/bingo', bingoRoutes)
 
 io.on('connection', async (socket) => {
-  console.log('a user connected')
   const games = await db.getLiveGames()
-
   games.map((game) => {
-    socket.on(game.id, (roomInfo) => {
-      console.log({ gameId: game.id, roomInfo })
-      //receive guest isReady status and return all ready to both host and guest
-      if (roomInfo.guest) {
-        io.emit(game.id, roomInfo.guest)
+    socket.on(game.id, (arg) => {
+      const order = util.getRandomInt(2)
+      console.log(order)
+      //receive host and guest isReady status and return ready to both host and guest
+      let wordId = ''
+      if (arg.guest) {
+        io.emit(game.id, {
+          type: 'guest-join',
+          guestName: arg.guest,
+          order: order,
+        })
+      }
+      if (arg.isReady) {
+        io.emit(game.id, { type: 'ready', isHost: arg.isHost, isReady: true })
       }
     })
   })

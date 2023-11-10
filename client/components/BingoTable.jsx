@@ -11,7 +11,11 @@ export default function BingoTable({
   bingoWords,
   handleReady,
   handleExit,
-  isGuestIn,
+  isReady,
+  isReadyDisabled,
+  guestName,
+  hostName,
+  backDropMessage,
 }) {
   const tableColumn = Math.sqrt(bingoSize)
 
@@ -42,9 +46,11 @@ export default function BingoTable({
     items.push(
       <Item key={i}>
         {gridWord.length > 0 ? (
-          <Typography variant="string" sx={{ alignItems: 'center' }}>
-            {gridWord[0].word}
-          </Typography>
+          <Button variant="text">
+            <Typography variant="string" sx={{ alignItems: 'center' }}>
+              {gridWord[0].word.toUpperCase()}
+            </Typography>
+          </Button>
         ) : (
           <Button
             variant="contained"
@@ -58,15 +64,29 @@ export default function BingoTable({
     )
   }
 
-  return (
-    <div style={{ width: '100%' }}>
+  const BackDrop = () => {
+    return (
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={!isGuestIn}
+        open={!isReady}
       >
         <CircularProgress color="inherit" />
-        Waiting for Oppornent
+        {backDropMessage}
       </Backdrop>
+    )
+  }
+
+  return (
+    <div style={{ width: '100%' }}>
+      <BackDrop />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="subtitle1">HOST: {hostName}</Typography>
+        <Typography variant="subtitle1">BINGOS: </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="subtitle1">GUEST: {guestName} </Typography>
+        <Typography variant="subtitle1">BINGOS: </Typography>
+      </Box>
       <Box
         sx={{
           display: 'grid',
@@ -83,7 +103,12 @@ export default function BingoTable({
           justifyContent: 'center',
         }}
       >
-        <Button sx={{ m: 1 }} variant="outlined" onClick={handleReady}>
+        <Button
+          sx={{ m: 1 }}
+          variant="outlined"
+          onClick={handleReady}
+          disabled={isReadyDisabled}
+        >
           Ready
         </Button>
         <Button sx={{ m: 1 }} variant="outlined" onClick={handleExit}>

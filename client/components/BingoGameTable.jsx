@@ -42,7 +42,6 @@ export default function BingoGameTable({ data, handleJoinGame }) {
     setPage(0)
   }
 
-
   function TablePaginationActions(props) {
     const theme = useTheme()
     const { count, page, rowsPerPage, onPageChange } = props
@@ -126,7 +125,7 @@ export default function BingoGameTable({ data, handleJoinGame }) {
               <TableCell style={{ width: 160 }} align="center">
                 <Button
                   variant="outlined"
-                  onClick={(e) => handleJoinGame(row.id)}
+                  onClick={(e) => handleJoinGame(row.id, row.host)}
                 >
                   Join
                 </Button>

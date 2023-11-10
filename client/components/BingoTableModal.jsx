@@ -37,7 +37,7 @@ export default function BingoWordModal({
         <Card>
           <CardContent>
             <Typography sx={{ fontSize: 15 }} color="text.primary" gutterBottom>
-              {word.word}
+              {word.word.toUpperCase()}
             </Typography>
           </CardContent>
           <CardActions>
