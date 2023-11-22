@@ -43,6 +43,8 @@ export default function WordBingo() {
   const [isOpponentReady, setIsOpponentReady] = useState(false)
   const [order, setOrder] = useState(0)
   const [backDropMessage, setBackDropMessage] = useState('')
+  const [currentTurn, setCurrentTurn] = useState(0)
+  const [isReadySent, setIsReadySent] = useState(false)
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -81,14 +83,24 @@ export default function WordBingo() {
   useEffect(() => {
     socket.on(gameId, (arg) => {
       if (arg.type === 'guest-join') {
-        handleGuestJoin(arg.guestName)
-        if (arg.order === 0) {
-          setOrder(1)
-        }
+        handleGuestJoin(arg)
       }
       if (arg.type === 'ready' && arg.isHost != isHost) {
         setIsOpponentReady(arg.isReady)
         setIsReady(arg.isReady)
+        handleOpponentReady()
+      }
+      // update bingo word status as matched, isMatch: true.
+      if (arg.type === 'word-selection') {
+        setBingoWords((prev) =>
+          prev.map((word) => {
+            if (word.wordId === arg.wordId) {
+              word.isMatch = true
+            }
+          })
+        )
+        console.log(bingoWords)
+        console.log(wordId)
       }
     })
     return () => {
@@ -114,12 +126,16 @@ export default function WordBingo() {
     setOpen(false)
   }
 
-  function handleGuestJoin(guestName) {
+  function handleGuestJoin(joinInfo) {
     // handle guest join event
     setIsGuestIn(true)
     setIsReady(true)
     setIsGuestInAlertShow(true)
-    setGuestName(guestName)
+    setGuestName(joinInfo.guestName)
+    // receive turn and update order state
+    if (joinInfo.order === 0 && isHost) {
+      setOrder(1)
+    }
   }
 
   function handleJoinGame(gameId, hostName) {
@@ -187,16 +203,30 @@ export default function WordBingo() {
     socket.emit(gameRoomId, { isHost: isHost, isReady: true })
   }
 
-  function emitWordSelection(word) {
-    socket.emit(gameRoomId, word)
+  function emitWordSelection(wordId) {
+    socket.emit(gameRoomId, { type: 'word-selection', wordId: wordId })
   }
 
   function handleReady() {
     // set isReady value true.
-    emitReady(gameId)
+    if (!isReadySent) {
+      emitReady(gameId)
+      setIsReadySent(true)
+    }
     setBackDropMessage('Waiting for opponent to ready.')
     if (isOpponentReady) {
       setIsReady(true)
+      hanldeTurn(currentTurn)
+    } else {
+      setIsReady(false)
+    }
+  }
+
+  function handleOpponentReady() {
+    setBackDropMessage('Waiting for opponent to ready.')
+    if (isReadySent) {
+      setIsReady(true)
+      hanldeTurn(currentTurn)
     } else {
       setIsReady(false)
     }
@@ -214,9 +244,26 @@ export default function WordBingo() {
     setBingoWords([])
   }
 
-  function handleBingoWordSelect(word) {
-    emitWordSelection()
+  function handleWordSelect(wordId) {
+    // let a player with turn to select word.
+    console.log(wordId)
+    emitWordSelection(wordId)
   }
+
+  function hanldeTurn() {
+    if (currentTurn != order) {
+      setBackDropMessage('Waiting for opponent choose word.')
+      setIsReady(false)
+    } else {
+      setIsReady(true)
+    }
+  }
+
+  // check if the selected word make line/s or make bingo.
+  // send word selected and bingo status to server.
+  // send bingo status and selected word to the other player.
+  // if the other player complete bingo the game is over and notify it to the other player.
+  // notify the game is over and redirect players to bingo page.
 
   //if game is not started display game list and option to create new game
   if (!isShow) {
@@ -275,6 +322,7 @@ export default function WordBingo() {
           guestName={guestName}
           hostName={hostName}
           backDropMessage={backDropMessage}
+          handleWordSelect={handleWordSelect}
         />
         <BingoWordModal
           open={open}

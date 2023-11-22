@@ -16,6 +16,7 @@ export default function BingoTable({
   guestName,
   hostName,
   backDropMessage,
+  handleWordSelect,
 }) {
   const tableColumn = Math.sqrt(bingoSize)
 
@@ -46,7 +47,10 @@ export default function BingoTable({
     items.push(
       <Item key={i}>
         {gridWord.length > 0 ? (
-          <Button variant="text">
+          <Button
+            variant="text"
+            onClick={() => handleWordSelect(gridWord[0].wordId)}
+          >
             <Typography variant="string" sx={{ alignItems: 'center' }}>
               {gridWord[0].word.toUpperCase()}
             </Typography>

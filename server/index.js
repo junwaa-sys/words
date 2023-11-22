@@ -29,8 +29,11 @@ io.on('connection', async (socket) => {
   games.map((game) => {
     socket.on(game.id, (arg) => {
       const order = util.getRandomInt(2)
-      console.log(order)
-      //receive host and guest isReady status and return ready to both host and guest
+
+      //send order to players when guest is joined game.
+      //receive selected word and send it to players.
+      //receive bingo status and send to other players.
+
       let wordId = ''
       if (arg.guest) {
         io.emit(game.id, {
@@ -40,7 +43,12 @@ io.on('connection', async (socket) => {
         })
       }
       if (arg.isReady) {
+        //receive host and guest isReady status and return ready to both host and guest
         io.emit(game.id, { type: 'ready', isHost: arg.isHost, isReady: true })
+      }
+
+      if (arg.type === 'word-selection') {
+        io.emit(game.id, { type: arg.type, wordId: arg.wordId })
       }
     })
   })
