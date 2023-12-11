@@ -4,7 +4,6 @@ import { Button } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
-import { disabled } from '../../server/routes/wordRoutes'
 
 export default function BingoTable({
   handleOpen,
