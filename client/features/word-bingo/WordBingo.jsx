@@ -46,6 +46,7 @@ export default function WordBingo() {
   const [currentTurn, setCurrentTurn] = useState(0)
   const [isReadySent, setIsReadySent] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
+  const [isSelectionReady, setIsSelectionReady] = useState(false)
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -272,7 +273,6 @@ export default function WordBingo() {
 
   function handleWordSelection(wordId) {
     // let a player with turn to select word.
-    console.log({ wordId })
     setBingoWords((prev) =>
       prev.map((word) => {
         if (word.wordId === wordId) {
@@ -282,7 +282,6 @@ export default function WordBingo() {
         }
       })
     )
-    console.log(bingoWords)
   }
 
   function handleTurn() {
@@ -292,6 +291,7 @@ export default function WordBingo() {
     } else {
       showAlert('Please select word!!')
       setIsReady(true)
+      setIsSelectionReady(true)
     }
   }
 
@@ -364,6 +364,7 @@ export default function WordBingo() {
           hostName={hostName}
           backDropMessage={backDropMessage}
           emitWordSelection={emitWordSelection}
+          isSelectionReady={isSelectionReady}
         />
         <BingoWordModal
           open={open}
