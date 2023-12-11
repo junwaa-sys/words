@@ -22,7 +22,6 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 import Alert from '@mui/material/Alert'
 import Slide from '@mui/material/Slide'
-import { WidgetsRounded } from '@mui/icons-material'
 
 export default function WordBingo() {
   const [open, setOpen] = useState(false)
