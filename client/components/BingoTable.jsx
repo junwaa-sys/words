@@ -4,6 +4,7 @@ import { Button } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
+import { disabled } from '../../server/routes/wordRoutes'
 
 export default function BingoTable({
   handleOpen,
@@ -16,7 +17,8 @@ export default function BingoTable({
   guestName,
   hostName,
   backDropMessage,
-  handleWordSelect,
+  emitWordSelection,
+  isSelectionReady,
 }) {
   const tableColumn = Math.sqrt(bingoSize)
 
@@ -49,7 +51,7 @@ export default function BingoTable({
         {gridWord.length > 0 ? (
           <Button
             variant="text"
-            onClick={() => handleWordSelect(gridWord[0].wordId)}
+            onClick={() => emitWordSelection(gridWord[0].wordId)}
           >
             <Typography variant="string" sx={{ alignItems: 'center' }}>
               {gridWord[0].word.toUpperCase()}

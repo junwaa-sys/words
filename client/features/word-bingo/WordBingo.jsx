@@ -22,6 +22,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 import Alert from '@mui/material/Alert'
 import Slide from '@mui/material/Slide'
+import { WidgetsRounded } from '@mui/icons-material'
 
 export default function WordBingo() {
   const [open, setOpen] = useState(false)
@@ -33,7 +34,7 @@ export default function WordBingo() {
   const [bingoSize, setBingoSize] = useState(9)
   const [gridIndex, setGridIndex] = useState(null)
   const [isGuestIn, setIsGuestIn] = useState(false)
-  const [isGuestInAlertShow, setIsGuestInAlertShow] = useState(false)
+  const [isAlertShow, setIsAlertShow] = useState(false)
   const [hostName, setHostName] = useState('')
   const [guestName, setGuestName] = useState('')
   const [isReadyDisabled, setIsReadyDisabled] = useState(true)
@@ -45,6 +46,7 @@ export default function WordBingo() {
   const [backDropMessage, setBackDropMessage] = useState('')
   const [currentTurn, setCurrentTurn] = useState(0)
   const [isReadySent, setIsReadySent] = useState(false)
+  const [alertMessage, setAlertMessage] = useState('')
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -87,26 +89,38 @@ export default function WordBingo() {
       }
       if (arg.type === 'ready' && arg.isHost != isHost) {
         setIsOpponentReady(arg.isReady)
-        setIsReady(arg.isReady)
         handleOpponentReady()
+      }
+
+      if (
+        arg.type === 'ready' &&
+        arg.isHost &&
+        arg.order === 0 &&
+        isHost === false
+      ) {
+        setOrder(1)
       }
       // update bingo word status as matched, isMatch: true.
       if (arg.type === 'word-selection') {
-        setBingoWords((prev) =>
-          prev.map((word) => {
-            if (word.wordId === arg.wordId) {
-              word.isMatch = true
-            }
-          })
-        )
-        console.log(bingoWords)
-        console.log(wordId)
+        console.log('word selection')
+        console.log(arg)
+      }
+      if (arg.type === 'guest-order-update' && isHost === false) {
+        console.log({ 'guest order': arg.order })
+        setOrder(arg.order)
+      }
+      if (arg.type === 'word-selection') {
+      }
+
+      if (arg.type === 'greeting') {
+        console.log('greeting')
       }
     })
+
     return () => {
       socket.off(gameId)
     }
-  }, [gameId])
+  }, [gameId, isReadySent])
 
   function addWord(wordDetail) {
     setBingoWords((prev) => [...prev, { ...wordDetail, isMatch: false }])
@@ -128,11 +142,13 @@ export default function WordBingo() {
 
   function handleGuestJoin(joinInfo) {
     // handle guest join event
+    console.log({ guestOrder: joinInfo.order, isHost })
     setIsGuestIn(true)
     setIsReady(true)
-    setIsGuestInAlertShow(true)
     setGuestName(joinInfo.guestName)
     // receive turn and update order state
+    showAlert(`${joinInfo.guestName} has joined!`)
+    emitGuestOrderUpdate(joinInfo.order)
     if (joinInfo.order === 0 && isHost) {
       setOrder(1)
     }
@@ -200,35 +216,46 @@ export default function WordBingo() {
   }
 
   function emitReady(gameRoomId) {
-    socket.emit(gameRoomId, { isHost: isHost, isReady: true })
+    socket.emit(gameRoomId, { isHost: isHost, isReady: true, order: order })
+    setIsReadySent(true)
   }
 
   function emitWordSelection(wordId) {
-    socket.emit(gameRoomId, { type: 'word-selection', wordId: wordId })
+    socket.emit(gameId, { type: 'word-selection', wordId: wordId })
+    handleWordSelection(wordId)
+  }
+
+  function emitGuestOrderUpdate(order) {
+    socket.emit(gameId, { type: 'guest-order-update', order: order })
   }
 
   function handleReady() {
     // set isReady value true.
+
     if (!isReadySent) {
       emitReady(gameId)
-      setIsReadySent(true)
-    }
-    setBackDropMessage('Waiting for opponent to ready.')
-    if (isOpponentReady) {
-      setIsReady(true)
-      hanldeTurn(currentTurn)
+      if (isOpponentReady) {
+        setIsReady(true)
+        handleTurn()
+      } else {
+        setBackDropMessage('Waiting for opponent to ready.')
+        setIsReady(false)
+      }
     } else {
-      setIsReady(false)
+      if (isOpponentReady) {
+        handleOpponentReady()
+        handleTurn()
+      } else {
+        setIsReady(false)
+      }
     }
+    console.log({ order })
   }
 
   function handleOpponentReady() {
-    setBackDropMessage('Waiting for opponent to ready.')
     if (isReadySent) {
       setIsReady(true)
-      hanldeTurn(currentTurn)
-    } else {
-      setIsReady(false)
+      handleTurn()
     }
   }
 
@@ -244,19 +271,34 @@ export default function WordBingo() {
     setBingoWords([])
   }
 
-  function handleWordSelect(wordId) {
+  function handleWordSelection(wordId) {
     // let a player with turn to select word.
-    console.log(wordId)
-    emitWordSelection(wordId)
+    console.log({ wordId })
+    setBingoWords((prev) =>
+      prev.map((word) => {
+        if (word.wordId === wordId) {
+          return { ...word, isMatch: true }
+        } else {
+          return { ...word }
+        }
+      })
+    )
+    console.log(bingoWords)
   }
 
-  function hanldeTurn() {
+  function handleTurn() {
     if (currentTurn != order) {
       setBackDropMessage('Waiting for opponent choose word.')
       setIsReady(false)
     } else {
+      showAlert('Please select word!!')
       setIsReady(true)
     }
+  }
+
+  function showAlert(message) {
+    setAlertMessage(message)
+    setIsAlertShow(true)
   }
 
   // check if the selected word make line/s or make bingo.
@@ -301,13 +343,13 @@ export default function WordBingo() {
   } else {
     return (
       <>
-        <Slide in={isGuestInAlertShow} container={containerRef.current}>
+        <Slide in={isAlertShow} container={containerRef.current}>
           <Alert
             onClose={() => {
-              setIsGuestInAlertShow(false)
+              setIsAlertShow(false)
             }}
           >
-            Guest Joined.
+            {alertMessage}
           </Alert>
         </Slide>
         <BingoTable
@@ -322,7 +364,7 @@ export default function WordBingo() {
           guestName={guestName}
           hostName={hostName}
           backDropMessage={backDropMessage}
-          handleWordSelect={handleWordSelect}
+          emitWordSelection={emitWordSelection}
         />
         <BingoWordModal
           open={open}
