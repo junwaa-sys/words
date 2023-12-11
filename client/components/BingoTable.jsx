@@ -50,8 +50,13 @@ export default function BingoTable({
         {gridWord.length > 0 ? (
           <Button
             variant="text"
-            disabled={!isSelectionReady}
-            onClick={() => emitWordSelection(gridWord[0].wordId)}
+            disabled={!isSelectionReady || gridWord[0].isMatch}
+            onClick={() =>
+              emitWordSelection(
+                gridWord[0].wordId,
+                gridWord[0].word.toUpperCase()
+              )
+            }
           >
             <Typography variant="string" sx={{ alignItems: 'center' }}>
               {gridWord[0].isMatch ? 'Bingo' : gridWord[0].word.toUpperCase()}

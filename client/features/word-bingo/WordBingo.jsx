@@ -101,19 +101,13 @@ export default function WordBingo() {
         setOrder(1)
       }
       // update bingo word status as matched, isMatch: true.
-      if (arg.type === 'word-selection') {
-        console.log('word selection')
-        console.log(arg)
-      }
       if (arg.type === 'guest-order-update' && isHost === false) {
-        console.log({ 'guest order': arg.order })
         setOrder(arg.order)
       }
-      if (arg.type === 'word-selection') {
-      }
-
-      if (arg.type === 'greeting') {
-        console.log('greeting')
+      if (arg.type === 'word-selection' && arg.isHost != isHost) {
+        handleWordSelection(arg.wordId)
+        showAlert(`Opponent selected ${arg.word}`)
+        handleTurn(order)
       }
     })
 
@@ -142,7 +136,7 @@ export default function WordBingo() {
 
   function handleGuestJoin(joinInfo) {
     // handle guest join event
-    console.log({ guestOrder: joinInfo.order, isHost })
+
     setIsGuestIn(true)
     setIsReady(true)
     setGuestName(joinInfo.guestName)
@@ -220,9 +214,19 @@ export default function WordBingo() {
     setIsReadySent(true)
   }
 
-  function emitWordSelection(wordId) {
-    socket.emit(gameId, { type: 'word-selection', wordId: wordId })
+  function emitWordSelection(wordId, word) {
+    socket.emit(gameId, {
+      type: 'word-selection',
+      wordId: wordId,
+      word: word,
+      isHost: isHost,
+    })
     handleWordSelection(wordId)
+    if (order === 0) {
+      handleTurn(1)
+    } else {
+      handleTurn(0)
+    }
   }
 
   function emitGuestOrderUpdate(order) {
@@ -236,7 +240,7 @@ export default function WordBingo() {
       emitReady(gameId)
       if (isOpponentReady) {
         setIsReady(true)
-        handleTurn()
+        handleTurn(0)
       } else {
         setBackDropMessage('Waiting for opponent to ready.')
         setIsReady(false)
@@ -244,18 +248,17 @@ export default function WordBingo() {
     } else {
       if (isOpponentReady) {
         handleOpponentReady()
-        handleTurn()
+        handleTurn(0)
       } else {
         setIsReady(false)
       }
     }
-    console.log({ order })
   }
 
   function handleOpponentReady() {
     if (isReadySent) {
       setIsReady(true)
-      handleTurn()
+      handleTurn(0)
     }
   }
 
@@ -284,8 +287,8 @@ export default function WordBingo() {
     )
   }
 
-  function handleTurn() {
-    if (currentTurn != order) {
+  function handleTurn(turn) {
+    if (turn != order) {
       setBackDropMessage('Waiting for opponent choose word.')
       setIsReady(false)
     } else {

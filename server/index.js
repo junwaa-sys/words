@@ -53,7 +53,12 @@ io.on('connection', async (socket) => {
       }
 
       if (arg.type === 'word-selection') {
-        io.emit(game.id, { type: arg.type, wordId: arg.wordId })
+        io.emit(game.id, {
+          type: arg.type,
+          wordId: arg.wordId,
+          word: arg.word,
+          isHost: arg.isHost,
+        })
       }
 
       if (arg.type === 'guest-order-update') {
