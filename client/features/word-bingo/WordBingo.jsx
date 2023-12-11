@@ -47,6 +47,8 @@ export default function WordBingo() {
   const [isReadySent, setIsReadySent] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
   const [isSelectionReady, setIsSelectionReady] = useState(false)
+  const [noOfBingos, setNoOfBingos] = useState(0)
+  const [opponentNoOfBingos, setOpponentNoOfBings] = useState(0)
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -123,6 +125,7 @@ export default function WordBingo() {
     )
     setOpen(false)
     setIsReadyDisabled(!isBingoTableFill())
+    sortBingoWord()
   }
 
   function handleOpen(index) {
@@ -303,7 +306,16 @@ export default function WordBingo() {
     setIsAlertShow(true)
   }
 
-  // check if the selected word make line/s or make bingo.
+  function checkBingo() {
+    // check if the selected word make line/s or make bingo.
+    const bingoWordsForCheck = bingoWords.sort(
+      (wordA, wordB) => wordA.gridIndex - wordB.gridIndex
+    )
+    const noOfRows = Math.sqrt(bingoSize) * 2 + 2
+
+    
+  }
+
   // send word selected and bingo status to server.
   // send bingo status and selected word to the other player.
   // if the other player complete bingo the game is over and notify it to the other player.
