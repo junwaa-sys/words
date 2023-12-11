@@ -18,7 +18,6 @@ export default function BingoTable({
   hostName,
   backDropMessage,
   emitWordSelection,
-  isSelectionReady,
 }) {
   const tableColumn = Math.sqrt(bingoSize)
 
