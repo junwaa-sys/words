@@ -18,6 +18,8 @@ export default function BingoTable({
   backDropMessage,
   emitWordSelection,
   isSelectionReady,
+  bingoCount,
+  bingoCountOpponent,
 }) {
   const tableColumn = Math.sqrt(bingoSize)
 
@@ -92,11 +94,13 @@ export default function BingoTable({
       <BackDrop />
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="subtitle1">HOST: {hostName}</Typography>
-        <Typography variant="subtitle1">BINGOS: </Typography>
+        <Typography variant="subtitle1">BINGOS: {bingoCount}</Typography>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="subtitle1">GUEST: {guestName} </Typography>
-        <Typography variant="subtitle1">BINGOS: </Typography>
+        <Typography variant="subtitle1">
+          BINGOS: {bingoCountOpponent}
+        </Typography>
       </Box>
       <Box
         sx={{

@@ -49,6 +49,9 @@ export default function WordBingo() {
   const [isSelectionReady, setIsSelectionReady] = useState(false)
   const [noOfBingos, setNoOfBingos] = useState(0)
   const [opponentNoOfBingos, setOpponentNoOfBings] = useState(0)
+  const [bingoCount, setBingoCount] = useState(0)
+  const [bingoCountOpponent, setBingoCountOpponent] = useState(0)
+  const [testBingo, setTestBingo] = useState([])
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -118,14 +121,31 @@ export default function WordBingo() {
     }
   }, [gameId, isReadySent])
 
+  function initializeBingoTable() {
+    const tableSize = Math.sqrt(bingoSize)
+
+    for (let i = 0; i < tableSize; i++) {
+      setTestBingo((prev) => [...prev, []])
+    }
+  }
+
   function addWord(wordDetail) {
+    const row =
+      wordDetail.gridIndex > 0
+        ? Math.floor(wordDetail.gridIndex / Math.sqrt(bingoSize))
+        : 0
+
     setBingoWords((prev) => [...prev, { ...wordDetail, isMatch: false }])
     setWords((prev) =>
       prev.filter((element) => element.id != wordDetail.wordId)
     )
+    testBingo[row].push({ ...wordDetail, isMatch: false })
+    testBingo[row].sort((a, b) => a.gridIndex - b.gridIndex)
+
     setOpen(false)
     setIsReadyDisabled(!isBingoTableFill())
-    sortBingoWord()
+
+    checkBingo()
   }
 
   function handleOpen(index) {
@@ -166,6 +186,7 @@ export default function WordBingo() {
     connectGameRoom(false, roomInfo)
     setGuestName(user.name)
     setIsHost(false)
+    initializeBingoTable()
   }
 
   async function handleAddGame() {
@@ -186,6 +207,7 @@ export default function WordBingo() {
       isHostReady: false,
     }
     connectGameRoom(true, roomInfo)
+    initializeBingoTable()
   }
 
   function connectGameRoom(isHost, gameRoomInfo) {
@@ -308,12 +330,48 @@ export default function WordBingo() {
 
   function checkBingo() {
     // check if the selected word make line/s or make bingo.
-    const bingoWordsForCheck = bingoWords.sort(
-      (wordA, wordB) => wordA.gridIndex - wordB.gridIndex
-    )
-    const noOfRows = Math.sqrt(bingoSize) * 2 + 2
+    // check bingo for rows
+    // check bingo for columns
+    // check bingo for crosslines
+    // check bingo for reverse crosslines
+    setBingoCount(0)
+    for (let i = 0; i < testBingo.length; i++) {
+      const countToBingo = Math.sqrt(bingoSize)
+      let rowMatchCount = 0
+      let columnMatchCount = 0
+      let crossMatchCount = 0
+      let reverseCrossMatchCount = 0
 
-    
+      for (let y = 0; y < testBingo.length; y++) {
+        if (testBingo[i][y].isMatch === true) {
+          rowMatchCount += 1
+        }
+        if (testBingo[y][i].isMatch === true) {
+          columnMatchCount += 1
+        }
+        if (testBingo[i][i].isMatch === true) {
+          crossMatchCount += 1
+        }
+        if (testBingo[countToBingo - i][countToBingo - i].isMatch === true) {
+          reverseCrossMatchCount += 1
+        }
+      }
+      if (rowMatchCount === countToBingo) {
+        setBingoCount((prev) => prev + 1)
+      }
+
+      if (columnMatchCount === countToBingo) {
+        setBingoCount((prev) => prev + 1)
+      }
+
+      if (crossMatchCount === countToBingo) {
+        setBingoCount((prev) => prev + 1)
+      }
+
+      if (reverseCrossMatchCount === countToBingo) {
+        setBingoCount((prev) => prev + 1)
+      }
+    }
   }
 
   // send word selected and bingo status to server.
@@ -380,6 +438,8 @@ export default function WordBingo() {
           backDropMessage={backDropMessage}
           emitWordSelection={emitWordSelection}
           isSelectionReady={isSelectionReady}
+          bingoCount={bingoCount}
+          bingoCountOpponent={bingoCountOpponent}
         />
         <BingoWordModal
           open={open}
