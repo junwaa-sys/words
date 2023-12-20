@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAuth0 } from '@auth0/auth0-react'
 import { io } from 'socket.io-client'
-import { useNavigate } from 'react-router-dom'
 
 import {
   loadGames,
@@ -19,7 +18,7 @@ import BingoSetup from '../../components/BingoSetup'
 import BingoGameTable from '../../components/BingoGameTable'
 import BingoWinModal from '../../components/BingoWinModal'
 
-import { Container, Button, Input } from '@mui/material'
+import { Container } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import Box from '@mui/material/Box'
 import Alert from '@mui/material/Alert'
@@ -41,20 +40,15 @@ export default function WordBingo() {
   const [guestName, setGuestName] = useState('')
   const [isReadyDisabled, setIsReadyDisabled] = useState(true)
   const [isHost, setIsHost] = useState(false)
-  const [waitingMessage, setWaitingMessage] = useState('')
   const [isReady, setIsReady] = useState(false)
   const [isOpponentReady, setIsOpponentReady] = useState(false)
   const [order, setOrder] = useState(0)
   const [backDropMessage, setBackDropMessage] = useState('')
-  const [currentTurn, setCurrentTurn] = useState(0)
   const [isReadySent, setIsReadySent] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
   const [isSelectionReady, setIsSelectionReady] = useState(false)
-  const [noOfBingos, setNoOfBingos] = useState(0)
-  const [opponentNoOfBingos, setOpponentNoOfBings] = useState(0)
   const [bingoCount, setBingoCount] = useState(0)
   const [bingoCountOpponent, setBingoCountOpponent] = useState(0)
-  const [testBingo, setTestBingo] = useState([])
   const [winningUser, setWinningUser] = useState('')
   const [winningCount, setWinningCount] = useState(0)
 
@@ -64,7 +58,6 @@ export default function WordBingo() {
   const loadingAddGame = useSelector(isLoadingAddGame)
   const socket = io()
   const containerRef = React.useRef(null)
-  const navigate = useNavigate()
 
   //load current game list and let user to choose to join if the game room is not full
 
