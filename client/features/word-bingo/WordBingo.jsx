@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAuth0 } from '@auth0/auth0-react'
 import { io } from 'socket.io-client'
+import { useNavigate } from 'react-router-dom'
 
 import {
   loadGames,
@@ -16,6 +17,7 @@ import BingoTable from '../../components/BingoTable'
 import BingoWordModal from '../../components/BingoTableModal'
 import BingoSetup from '../../components/BingoSetup'
 import BingoGameTable from '../../components/BingoGameTable'
+import BingoWinModal from '../../components/BingoWinModal'
 
 import { Container, Button, Input } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -25,6 +27,7 @@ import Slide from '@mui/material/Slide'
 
 export default function WordBingo() {
   const [open, setOpen] = useState(false)
+  const [winModalOpen, setWinModalOpen] = useState(false)
   const [words, setWords] = useState([])
   const [bingoWords, setBingoWords] = useState([])
   const [isShow, setIsShow] = useState(false)
@@ -52,6 +55,8 @@ export default function WordBingo() {
   const [bingoCount, setBingoCount] = useState(0)
   const [bingoCountOpponent, setBingoCountOpponent] = useState(0)
   const [testBingo, setTestBingo] = useState([])
+  const [winningUser, setWinningUser] = useState('')
+  const [winningCount, setWinningCount] = useState(0)
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -59,6 +64,7 @@ export default function WordBingo() {
   const loadingAddGame = useSelector(isLoadingAddGame)
   const socket = io()
   const containerRef = React.useRef(null)
+  const navigate = useNavigate()
 
   //load current game list and let user to choose to join if the game room is not full
 
@@ -105,27 +111,42 @@ export default function WordBingo() {
       ) {
         setOrder(1)
       }
+
       // update bingo word status as matched, isMatch: true.
       if (arg.type === 'guest-order-update' && isHost === false) {
         setOrder(arg.order)
       }
+
       if (arg.type === 'word-selection' && arg.isHost != isHost) {
-        handleWordSelection(arg.wordId)
-        showAlert(`Opponent selected ${arg.word}`)
+        handleOpponentWordSelection(arg.wordId)
         handleTurn(order)
+      }
+
+      if (arg.type === 'bingo-count-update' && arg.isHost != isHost) {
+        setBingoCountOpponent(arg.bingoCount)
       }
     })
 
     return () => {
       socket.off(gameId)
     }
-  }, [gameId, isReadySent])
+  }, [gameId, isReadySent, bingoCount, bingoCountOpponent, isAlertShow])
+
+  useEffect(() => {
+    emitBingoCountUpdate(bingoCount)
+  }, [bingoCount])
+
+  useEffect(() => {
+    isHost
+      ? checkWin(hostName, bingoCount)
+      : checkWin(guestName, bingoCountOpponent)
+  }, [bingoCount, bingoCountOpponent])
 
   function initializeBingoTable() {
     const tableSize = Math.sqrt(bingoSize)
 
     for (let i = 0; i < tableSize; i++) {
-      setTestBingo((prev) => [...prev, []])
+      setBingoWords((prev) => [...prev, []])
     }
   }
 
@@ -135,17 +156,16 @@ export default function WordBingo() {
         ? Math.floor(wordDetail.gridIndex / Math.sqrt(bingoSize))
         : 0
 
-    setBingoWords((prev) => [...prev, { ...wordDetail, isMatch: false }])
+    // setBingoWords((prev) => [...prev, { ...wordDetail, isMatch: false }])
     setWords((prev) =>
       prev.filter((element) => element.id != wordDetail.wordId)
     )
-    testBingo[row].push({ ...wordDetail, isMatch: false })
-    testBingo[row].sort((a, b) => a.gridIndex - b.gridIndex)
+    bingoWords[row].push({ ...wordDetail, isMatch: false })
+    bingoWords[row].sort((a, b) => a.gridIndex - b.gridIndex)
 
     setOpen(false)
     setIsReadyDisabled(!isBingoTableFill())
-
-    checkBingo()
+    setIsAlertShow(false)
   }
 
   function handleOpen(index) {
@@ -155,6 +175,12 @@ export default function WordBingo() {
 
   function handleClose() {
     setOpen(false)
+  }
+
+  function handleWinModalClose() {
+    // notify the game is over and redirect players to bingo page.
+    console.log('close modal')
+    window.location.reload(false)
   }
 
   function handleGuestJoin(joinInfo) {
@@ -240,18 +266,26 @@ export default function WordBingo() {
   }
 
   function emitWordSelection(wordId, word) {
+    handleWordSelection(wordId)
     socket.emit(gameId, {
       type: 'word-selection',
       wordId: wordId,
       word: word,
       isHost: isHost,
     })
-    handleWordSelection(wordId)
     if (order === 0) {
       handleTurn(1)
     } else {
       handleTurn(0)
     }
+  }
+
+  function emitBingoCountUpdate(opponentBingoCountToUpdate) {
+    socket.emit(gameId, {
+      type: 'bingo-count-update',
+      opponentBingoCount: opponentBingoCountToUpdate,
+      isHost: isHost,
+    })
   }
 
   function emitGuestOrderUpdate(order) {
@@ -289,7 +323,10 @@ export default function WordBingo() {
 
   function isBingoTableFill() {
     // return true if bingo table is all filled
-    return bingoWords.length === bingoSize - 1
+    let totalBingoWords = 0
+    bingoWords.forEach((rows) => (totalBingoWords += rows.length))
+
+    return totalBingoWords === bingoSize
   }
 
   function handleExit() {
@@ -299,17 +336,20 @@ export default function WordBingo() {
     setBingoWords([])
   }
 
+  async function handleOpponentWordSelection(wordId) {
+    handleWordSelection(wordId)
+    emitBingoCountUpdate(bingoCount)
+  }
+
   function handleWordSelection(wordId) {
-    // let a player with turn to select word.
-    setBingoWords((prev) =>
-      prev.map((word) => {
+    bingoWords.forEach((row) => {
+      row.forEach((word) => {
         if (word.wordId === wordId) {
-          return { ...word, isMatch: true }
-        } else {
-          return { ...word }
+          return (word.isMatch = true)
         }
       })
-    )
+    })
+    checkBingo()
   }
 
   function handleTurn(turn) {
@@ -335,49 +375,66 @@ export default function WordBingo() {
     // check bingo for crosslines
     // check bingo for reverse crosslines
     setBingoCount(0)
-    for (let i = 0; i < testBingo.length; i++) {
+    let crossMatchCount = 0
+    let reverseCrossMatchCount = 0
+    let tempBingoCount = 0
+
+    for (let i = 0; i < bingoWords.length; i++) {
       const countToBingo = Math.sqrt(bingoSize)
       let rowMatchCount = 0
       let columnMatchCount = 0
-      let crossMatchCount = 0
-      let reverseCrossMatchCount = 0
 
-      for (let y = 0; y < testBingo.length; y++) {
-        if (testBingo[i][y].isMatch === true) {
+      for (let y = 0; y < countToBingo; y++) {
+        if (bingoWords[i][y].isMatch === true) {
           rowMatchCount += 1
         }
-        if (testBingo[y][i].isMatch === true) {
+        if (bingoWords[y][i].isMatch === true) {
           columnMatchCount += 1
         }
-        if (testBingo[i][i].isMatch === true) {
-          crossMatchCount += 1
-        }
-        if (testBingo[countToBingo - i][countToBingo - i].isMatch === true) {
-          reverseCrossMatchCount += 1
-        }
       }
+
+      if (bingoWords[i][i].isMatch === true) {
+        crossMatchCount += 1
+      }
+
+      if (bingoWords[i][countToBingo - i - 1].isMatch === true) {
+        reverseCrossMatchCount += 1
+      }
+
       if (rowMatchCount === countToBingo) {
         setBingoCount((prev) => prev + 1)
+        tempBingoCount += 1
       }
 
       if (columnMatchCount === countToBingo) {
         setBingoCount((prev) => prev + 1)
+        tempBingoCount += 1
       }
 
       if (crossMatchCount === countToBingo) {
         setBingoCount((prev) => prev + 1)
+        tempBingoCount += 1
       }
 
       if (reverseCrossMatchCount === countToBingo) {
         setBingoCount((prev) => prev + 1)
+        tempBingoCount += 1
       }
     }
   }
 
+  function checkWin(user, count) {
+    const countToWin = Math.sqrt(bingoSize)
+    if (count >= countToWin) {
+      // display modal to notify users
+      setWinningUser(user)
+      setWinningCount(count)
+      setWinModalOpen(true)
+    }
+  }
   // send word selected and bingo status to server.
   // send bingo status and selected word to the other player.
   // if the other player complete bingo the game is over and notify it to the other player.
-  // notify the game is over and redirect players to bingo page.
 
   //if game is not started display game list and option to create new game
   if (!isShow) {
@@ -440,6 +497,7 @@ export default function WordBingo() {
           isSelectionReady={isSelectionReady}
           bingoCount={bingoCount}
           bingoCountOpponent={bingoCountOpponent}
+          isHost={isHost}
         />
         <BingoWordModal
           open={open}
@@ -447,6 +505,12 @@ export default function WordBingo() {
           addWord={addWord}
           words={words}
           gridIndex={gridIndex}
+        />
+        <BingoWinModal
+          open={winModalOpen}
+          handleClose={handleWinModalClose}
+          user={winningUser}
+          count={winningCount}
         />
       </>
     )

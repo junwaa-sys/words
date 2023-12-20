@@ -20,6 +20,7 @@ export default function BingoTable({
   isSelectionReady,
   bingoCount,
   bingoCountOpponent,
+  isHost,
 }) {
   const tableColumn = Math.sqrt(bingoSize)
 
@@ -45,7 +46,8 @@ export default function BingoTable({
 
   const items = []
   for (let i = 0; i < bingoSize; i++) {
-    const gridWord = bingoWords.filter((word) => word.gridIndex === i)
+    const row = i > 0 ? Math.floor(i / Math.sqrt(bingoSize)) : 0
+    const gridWord = bingoWords[row].filter((word) => word.gridIndex === i)
 
     items.push(
       <Item key={i}>
@@ -94,12 +96,14 @@ export default function BingoTable({
       <BackDrop />
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="subtitle1">HOST: {hostName}</Typography>
-        <Typography variant="subtitle1">BINGOS: {bingoCount}</Typography>
+        <Typography variant="subtitle1">
+          BINGOS: {isHost ? bingoCount : bingoCountOpponent}
+        </Typography>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="subtitle1">GUEST: {guestName} </Typography>
         <Typography variant="subtitle1">
-          BINGOS: {bingoCountOpponent}
+          BINGOS: {isHost ? bingoCountOpponent : bingoCount}
         </Typography>
       </Box>
       <Box

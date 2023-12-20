@@ -64,6 +64,14 @@ io.on('connection', async (socket) => {
       if (arg.type === 'guest-order-update') {
         io.emit(game.id, { type: arg.type, order: arg.order })
       }
+
+      if (arg.type === 'bingo-count-update') {
+        io.emit(game.id, {
+          type: arg.type,
+          bingoCount: arg.opponentBingoCount,
+          isHost: arg.isHost,
+        })
+      }
     })
   })
 })
