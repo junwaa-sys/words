@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAuth0 } from '@auth0/auth0-react'
 import { io } from 'socket.io-client'
+import util from '../../../server/util/bingo'
 
 import {
   loadGames,
@@ -51,6 +52,7 @@ export default function WordBingo() {
   const [bingoCountOpponent, setBingoCountOpponent] = useState(0)
   const [winningUser, setWinningUser] = useState('')
   const [winningCount, setWinningCount] = useState(0)
+  const [isWin, setIsWin] = useState(false)
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -117,6 +119,13 @@ export default function WordBingo() {
 
       if (arg.type === 'bingo-count-update' && arg.isHost != isHost) {
         setBingoCountOpponent(arg.bingoCount)
+        if (arg.isWin) {
+          if (isHost) {
+            handleWin(guestName, arg.bingoCount)
+          } else {
+            handleWin(hostName, arg.bingoCount)
+          }
+        }
       }
     })
 
@@ -126,14 +135,16 @@ export default function WordBingo() {
   }, [gameId, isReadySent, bingoCount, bingoCountOpponent, isAlertShow])
 
   useEffect(() => {
-    emitBingoCountUpdate(bingoCount)
-  }, [bingoCount])
+    checkWin()
+    emitBingoCountUpdate(bingoCount, isWin)
+  }, [bingoCount, isWin])
 
-  useEffect(() => {
-    isHost
-      ? checkWin(hostName, bingoCount)
-      : checkWin(guestName, bingoCountOpponent)
-  }, [bingoCount, bingoCountOpponent])
+  // check if bingo meet win condition.
+  // useEffect(() => {
+  //   isHost
+  //     ? checkWin(hostName, bingoCount)
+  //     : checkWin(guestName, bingoCountOpponent)
+  // }, [bingoCount, bingoCountOpponent])
 
   function initializeBingoTable() {
     const tableSize = Math.sqrt(bingoSize)
@@ -172,7 +183,6 @@ export default function WordBingo() {
 
   function handleWinModalClose() {
     // notify the game is over and redirect players to bingo page.
-    console.log('close modal')
     window.location.reload(false)
   }
 
@@ -184,23 +194,26 @@ export default function WordBingo() {
     setGuestName(joinInfo.guestName)
     // receive turn and update order state
     showAlert(`${joinInfo.guestName} has joined!`)
-    emitGuestOrderUpdate(joinInfo.order)
-    if (joinInfo.order === 0 && isHost) {
+    if (joinInfo.order === 0) {
       setOrder(1)
     }
   }
 
   function handleJoinGame(gameId, hostName) {
+    const randOrder = util.getRandomInt(2)
     setGameId(gameId)
     setHostName(hostName)
     setIsGuestIn(true)
     setIsShow(true)
     setIsReady(true)
+    setOrder(randOrder)
 
     const roomInfo = {
       gameRoomId: gameId,
       guest: user.name,
       isGuestReady: false,
+      order: randOrder,
+      type: 'guest-join',
     }
     connectGameRoom(false, roomInfo)
     setGuestName(user.name)
@@ -239,11 +252,13 @@ export default function WordBingo() {
       }
       emitGameInfo(gameRoomId, roomInfo)
     } else {
-      const { gameRoomId, guest, isGuestReady } = gameRoomInfo
+      const { gameRoomId, guest, isGuestReady, type, order } = gameRoomInfo
       const roomInfo = {
         id: gameRoomId,
         guest,
         isGuestReady,
+        type: type,
+        order: order,
       }
       emitGameInfo(gameRoomId, roomInfo)
     }
@@ -265,6 +280,7 @@ export default function WordBingo() {
       wordId: wordId,
       word: word,
       isHost: isHost,
+      isWin: isWin,
     })
     if (order === 0) {
       handleTurn(1)
@@ -273,16 +289,13 @@ export default function WordBingo() {
     }
   }
 
-  function emitBingoCountUpdate(opponentBingoCountToUpdate) {
+  function emitBingoCountUpdate(opponentBingoCountToUpdate, isWin) {
     socket.emit(gameId, {
       type: 'bingo-count-update',
       opponentBingoCount: opponentBingoCountToUpdate,
+      isWin,
       isHost: isHost,
     })
-  }
-
-  function emitGuestOrderUpdate(order) {
-    socket.emit(gameId, { type: 'guest-order-update', order: order })
   }
 
   function handleReady() {
@@ -416,18 +429,34 @@ export default function WordBingo() {
     }
   }
 
-  function checkWin(user, count) {
+  // function checkWin(user, count) {
+  //   const countToWin = Math.sqrt(bingoSize)
+  //   if (count >= countToWin) {
+  //     // display modal to notify users
+  //     setWinningUser(user)
+  //     setWinningCount(count)
+  //     setWinModalOpen(true)
+  //   }
+  // }
+
+  function checkWin() {
     const countToWin = Math.sqrt(bingoSize)
-    if (count >= countToWin) {
+    const user = isHost ? hostName : guestName
+
+    if (bingoCount >= countToWin) {
       // display modal to notify users
-      setWinningUser(user)
-      setWinningCount(count)
-      setWinModalOpen(true)
+      setIsWin(true)
+      handleWin(user, bingoCount)
     }
   }
   // send word selected and bingo status to server.
   // send bingo status and selected word to the other player.
   // if the other player complete bingo the game is over and notify it to the other player.
+  function handleWin(user, count) {
+    setWinningUser(user)
+    setWinningCount(count)
+    setWinModalOpen(true)
+  }
 
   //if game is not started display game list and option to create new game
   if (!isShow) {

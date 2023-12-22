@@ -35,9 +35,7 @@ export default function BingoWordModal({ open, handleClose, user, count }) {
     >
       <DialogTitle id="words">Bingo Result</DialogTitle>
       <DialogContent dividers={scroll === 'paper'}>
-        <Typography>
-          {user} has {count} of bingos and Won the Game!
-        </Typography>
+        <Typography>{user} has Won the Game!</Typography>
         <Typography>Press OK to exit the game.</Typography>
       </DialogContent>
       <DialogActions>
