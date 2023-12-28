@@ -9,6 +9,7 @@ const wordRoutes = require('./routes/wordRoutes')
 const testRoutes = require('./routes/testRoutes')
 const testHistoryRoutes = require('./routes/testHistoryRoutes')
 const bingoRoutes = require('./routes/bingoRoutes')
+const { ArtTrack } = require('@mui/icons-material')
 
 const PORT = process.env.PORT || 3000
 const app = express()
@@ -66,6 +67,10 @@ io.on('connection', async (socket) => {
           isHost: arg.isHost,
           isWin: arg.isWin,
         })
+      }
+
+      if (arg.type === 'game-over') {
+        io.emit(game.id, { type: arg.type, isGameOver: arg.isGameOver })
       }
     })
   })

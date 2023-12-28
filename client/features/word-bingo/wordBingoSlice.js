@@ -27,6 +27,11 @@ export const loadWords = createAsyncThunk('bing/fetchWords', async (token) => {
   return response
 })
 
+export const deleteGame = createAsyncThunk('bingo/deleteGame', async (data) => {
+  const response = await api.deleteGame(data)
+  return response
+})
+
 const bingoSlice = createSlice({
   name: 'bingo',
   initialState: initialState,

@@ -47,3 +47,21 @@ export async function getWords(token) {
     console.log(error)
   }
 }
+
+export async function deleteGame(data) {
+  try {
+    //delete game room from db
+    const response = await fetch(`api/bingo/delete`, {
+      method: 'DELETE',
+      headers: {
+        authorization: `Bearer ${data.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ gameRoomId: data.gameRoomId }),
+    })
+    const json = await response.json()
+    return json
+  } catch (error) {
+    console.log(error)
+  }
+}

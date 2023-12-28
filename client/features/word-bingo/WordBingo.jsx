@@ -53,6 +53,7 @@ export default function WordBingo() {
   const [winningUser, setWinningUser] = useState('')
   const [winningCount, setWinningCount] = useState(0)
   const [isWin, setIsWin] = useState(false)
+  const [isGameOver, setIsGameOver] = useState(false)
 
   const { getAccessTokenSilently, user } = useAuth0()
   const dispatch = useDispatch()
@@ -73,6 +74,13 @@ export default function WordBingo() {
     const token = await getAccessTokenSilently()
     const response = await dispatch(loadWords(token))
     setWords(response.payload)
+  }
+
+  async function deleteGame() {
+    const token = await getAccessTokenSilently()
+    const response = await dispatch(deleteGame({ token, gameRoomId }))
+    setIsGameOver(true)
+    emitGameOver()
   }
 
   useEffect(() => {
@@ -184,6 +192,7 @@ export default function WordBingo() {
   function handleWinModalClose() {
     // notify the game is over and redirect players to bingo page.
     window.location.reload(false)
+    deleteGame()
   }
 
   function handleGuestJoin(joinInfo) {
@@ -295,6 +304,13 @@ export default function WordBingo() {
       opponentBingoCount: opponentBingoCountToUpdate,
       isWin,
       isHost: isHost,
+    })
+  }
+
+  function emitGameOver() {
+    socket.emit(gameId, {
+      type: 'game-over',
+      isGameOver: true,
     })
   }
 

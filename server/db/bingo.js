@@ -17,8 +17,12 @@ function addGame(auth0Id, userName, db = connection) {
     .returning(['id', 'host', 'status'])
 }
 
+function deleteGame(gameRoomId, db = connection) {
+  return db('bingo_games').delete().where('id', gameRoomId)
+}
+
 function getWords(db = connection) {
   return db('words').select()
 }
 
-module.exports = { getLiveGames, addGame, getWords }
+module.exports = { getLiveGames, addGame, getWords, deleteGame }

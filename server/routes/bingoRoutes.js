@@ -47,4 +47,15 @@ router.get('/words/get', async (req, res) => {
   }
 })
 
+router.delete('/delete', checkJwt, async (req, res) => {
+  try {
+    //delete game room in db
+    const gameRoomId = req.body.gameRoomId
+    const response = await db.deleteGame(gameRoomId)
+    res.json(response)
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 module.exports = router
